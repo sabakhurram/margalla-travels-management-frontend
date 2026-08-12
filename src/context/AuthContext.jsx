@@ -5,26 +5,52 @@ const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const getSession = async () => {
-      const { data, error } = await supabase.auth.getSession();
+  const fetchProfile = async (userId) => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .single();
 
-      if (error) {
-        console.error("Session error:", error);
+    if (error) {
+      console.error("Profile error:", error);
+      setProfile(null);
+      return;
+    }
+
+    setProfile(data);
+  };
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      setSession(session);
+
+      if (session?.user) {
+        await fetchProfile(session.user.id);
       }
 
-      setSession(data.session);
       setLoading(false);
     };
 
-    getSession();
+    initializeAuth();
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       setSession(session);
+
+      if (session?.user) {
+        await fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
+      }
     });
 
     return () => {
@@ -34,11 +60,13 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     await supabase.auth.signOut();
+    setProfile(null);
   };
 
   const value = {
     session,
     user: session?.user ?? null,
+    profile,
     loading,
     logout,
   };
