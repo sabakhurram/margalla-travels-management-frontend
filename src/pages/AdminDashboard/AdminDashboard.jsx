@@ -1,11 +1,12 @@
 import { useState } from "react";
 
-import Sidebar from "./components/Sidebar";
-import AdminHeader from "./components/AdminHeader";
-import AlertsPanel from "./components/AlertsPanel";
-import MileageChart from "./components/MileageChart";
-import VehicleStatusChart from "./components/VehicleStatusChart";
-import RecentActivity from "./components/RecentActivity";
+import Sidebar from "./Overview/Sidebar";
+import AdminHeader from "./Overview/AdminHeader";
+import AlertsPanel from "./Overview/AlertsPanel";
+import MileageChart from "./Overview/MileageChart";
+import VehicleStatusChart from "./Overview/VehicleStatusChart";
+import RecentActivity from "./Overview/RecentActivity";
+import Categories from "./Categories/Categories";
 import {
   CarFront,
   Users,
@@ -14,29 +15,35 @@ import {
   Bell
 } from "lucide-react";
 
-import KPICard from "./components/KPICard";
+import KPICard from "./Overview/KPICard";
 import "./AdminDashboard.css";
 
 function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("overview");
 
   return (
     <div className="admin-layout">
 
-      <Sidebar
-        isOpen={sidebarOpen}
-        setIsOpen={setSidebarOpen}
-      />
+     <Sidebar
+  isOpen={sidebarOpen}
+  setIsOpen={setSidebarOpen}
+  activeTab={activeTab}
+  setActiveTab={setActiveTab}
+/>
 
       <main className="admin-main">
 
         <AdminHeader
-          setSidebarOpen={setSidebarOpen}
-        />
+  setSidebarOpen={setSidebarOpen}
+  activeTab={activeTab}
+/>
 
-        <div className="admin-content">
+       <div className="admin-content">
 
-  <div className="dashboard-intro">
+  {activeTab === "overview" && (
+    <>
+       <div className="dashboard-intro">
     <div>
       <h2>Overview</h2>
 
@@ -93,9 +100,16 @@ function AdminDashboard() {
   <AlertsPanel />
 
 </div>
-  </div>
+    </>
+  )}
 
+  {activeTab === "categories" && (
+    <Categories />
+  )}
 
+</div>
+
+  
 
       </main>
 

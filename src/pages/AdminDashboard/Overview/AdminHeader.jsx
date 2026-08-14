@@ -9,9 +9,18 @@ import { useAuth } from "../../../context/AuthContext";
 
 import "./AdminHeader.css";
 
-function AdminHeader({ setSidebarOpen }) {
+function AdminHeader({ setSidebarOpen, activeTab }) {
   const { profile } = useAuth();
+const pageTitles = {
+  overview: "Dashboard",
+  categories: "Categories",
+  vehicles: "Vehicles",
+  drivers: "Drivers",
+  mileage: "Mileage",
+  audit: "Audit Logs",
+};
 
+const currentTitle = pageTitles[activeTab] || "Dashboard";
   const adminName = profile?.name || "Admin User";
 
   return (
@@ -28,8 +37,8 @@ function AdminHeader({ setSidebarOpen }) {
         </button>
 
         <div className="header-title">
-          <span>Management Dashboard</span>
-          <h1>Dashboard</h1>
+          <span>Margalla Travels</span>
+         <h1>{currentTitle}</h1>
         </div>
 
       </div>

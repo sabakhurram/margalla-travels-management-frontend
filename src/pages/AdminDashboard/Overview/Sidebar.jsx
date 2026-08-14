@@ -15,38 +15,43 @@ import logo from "../../../assets/logo2.png";
 
 import "./Sidebar.css";
 
-function Sidebar({ isOpen, setIsOpen }) {
+function Sidebar({
+  isOpen,
+  setIsOpen,
+  activeTab,
+  setActiveTab,
+}) {
   const navigationItems = [
-    {
-      label: "Dashboard",
-      icon: LayoutDashboard,
-      path: "/admin",
-    },
-    {
-      label: "Vehicles",
-      icon: CarFront,
-      path: "/admin/vehicles",
-    },
-    {
-      label: "Drivers",
-      icon: Users,
-      path: "/admin/drivers",
-    },
-    {
-      label: "Mileage",
-      icon: Gauge,
-      path: "/admin/mileage",
-    },
-    {
-      label: "Categories",
-      icon: Tags,
-      path: "/admin/categories",
-    },
-    {
-      label: "Audit Logs",
-      icon: ClipboardList,
-      path: "/admin/audit-logs",
-    },
+   {
+  label: "Dashboard",
+  icon: LayoutDashboard,
+  tab: "overview",
+},
+   {
+  label: "Vehicles",
+  icon: CarFront,
+  tab: "vehicles",
+},
+{
+  label: "Drivers",
+  icon: Users,
+  tab: "drivers",
+},
+{
+  label: "Mileage",
+  icon: Gauge,
+  tab: "mileage",
+},
+{
+  label: "Categories",
+  icon: Tags,
+  tab: "categories",
+},
+{
+  label: "Audit Logs",
+  icon: ClipboardList,
+  tab: "audit",
+},
   ];
 
   return (
@@ -88,14 +93,14 @@ function Sidebar({ isOpen, setIsOpen }) {
               <button
                 key={item.label}
                 className={`sidebar-nav-item ${
-                  item.path === "/admin"
+                activeTab === item.tab
                     ? "sidebar-nav-item-active"
                     : ""
                 }`}
-                onClick={() => {
-                  window.location.href = item.path;
-                  setIsOpen(false);
-                }}
+               onClick={() => {
+  setActiveTab(item.tab);
+  setIsOpen(false);
+}}
               >
                 <Icon size={18} strokeWidth={1.8} />
 
