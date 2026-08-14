@@ -1,0 +1,315 @@
+.alerts-panel {
+  min-width: 0;
+
+  padding: 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5edf0;
+  border-radius: 14px;
+
+  box-shadow: 0 3px 12px rgba(30, 70, 80, 0.04);
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.alerts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-bottom: 20px;
+}
+
+.alerts-title-wrapper {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  min-width: 0;
+}
+
+.alerts-title-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+
+  background: #fff4df;
+  color: #d89020;
+}
+
+.alerts-title-row {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+}
+
+.alerts-title-row h3 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.alerts-count {
+  min-width: 20px;
+  height: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 6px;
+
+  border-radius: 10px;
+
+  background: #e95c5c;
+  color: #ffffff;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.alerts-header p {
+  margin: 4px 0 0;
+
+  color: #8b98a7;
+
+  font-size: 10px;
+}
+
+/* =========================
+   VIEW ALL
+========================= */
+
+.alerts-view-all {
+  display: flex;
+  align-items: center;
+
+  gap: 4px;
+
+  flex-shrink: 0;
+
+  padding: 7px 10px;
+
+  border: 1px solid #e2e9ed;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #087f91;
+
+  font-family: inherit;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.alerts-view-all:hover {
+  background: #f1fafb;
+}
+
+/* =========================
+   ALERT LIST
+========================= */
+
+.alerts-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+/* =========================
+   ALERT CARD
+========================= */
+
+.alert-card {
+  display: flex;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  padding: 14px;
+
+  border-radius: 10px;
+
+  background: #fafcfd;
+
+  border: 1px solid #edf1f4;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.alert-card:hover {
+  transform: translateY(-1px);
+
+  box-shadow: 0 4px 12px rgba(30, 70, 80, 0.06);
+}
+
+/* =========================
+   ICON
+========================= */
+
+.alert-card-icon {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 9px;
+}
+
+/* Critical */
+
+.alert-critical .alert-card-icon {
+  background: #fff0f0;
+  color: #e05b5b;
+}
+
+/* Warning */
+
+.alert-warning .alert-card-icon {
+  background: #fff4df;
+  color: #d89020;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.alert-card-content {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.alert-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+}
+
+.alert-card-content h4 {
+  margin: 0;
+
+  color: #273348;
+
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.alert-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 23px;
+  height: 23px;
+
+  padding: 0 6px;
+
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  border: 1px solid #e7edf0;
+
+  color: #172033;
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.alert-card-content p {
+  margin: 5px 0 9px;
+
+  color: #8a96a5;
+
+  font-size: 9px;
+
+  line-height: 1.45;
+}
+
+/* =========================
+   REVIEW BUTTON
+========================= */
+
+.alert-review {
+  display: inline-flex;
+  align-items: center;
+
+  gap: 3px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #087f91;
+
+  font-family: inherit;
+
+  font-size: 9px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.alert-review:hover {
+  color: #065f6c;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1000px) {
+  .alerts-panel {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .alerts-panel {
+    padding: 16px;
+  }
+
+  .alerts-header {
+    align-items: flex-start;
+  }
+
+  .alerts-view-all {
+    padding: 6px 8px;
+  }
+
+  .alert-card {
+    padding: 12px;
+  }
+}

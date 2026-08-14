@@ -1,0 +1,222 @@
+.kpi-card {
+  position: relative;
+
+  min-width: 0;
+
+  padding: 18px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5edf0;
+  border-radius: 13px;
+
+  box-shadow: 0 3px 12px rgba(30, 70, 80, 0.035);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #d7e7ea;
+
+  box-shadow: 0 7px 18px rgba(30, 70, 80, 0.07);
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.kpi-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 15px;
+}
+
+/* =========================
+   ICON
+========================= */
+
+.kpi-icon {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #e8f7f9;
+
+  color: #078899;
+}
+
+/* =========================
+   TREND
+========================= */
+
+.kpi-trend {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 4px 7px;
+
+  border-radius: 6px;
+
+  background: #eaf8f1;
+
+  color: #26966a;
+
+  font-size: 8px;
+  font-weight: 650;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.kpi-card-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-title {
+  margin-bottom: 6px;
+
+  color: #8995a4;
+
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.kpi-value {
+  color: #172033;
+
+  font-size: 25px;
+  font-weight: 700;
+
+  line-height: 1.15;
+
+  letter-spacing: -0.5px;
+}
+
+/* =========================
+   BOTTOM
+========================= */
+
+.kpi-card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  margin-top: 9px;
+}
+
+.kpi-subtitle {
+  min-width: 0;
+
+  overflow: hidden;
+
+  color: #8b98a7;
+
+  font-size: 9px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kpi-arrow {
+  flex-shrink: 0;
+
+  color: #9ba8b3;
+}
+
+/* =========================
+   VARIANTS
+========================= */
+
+/* =========================
+   KPI COLOR VARIANTS
+========================= */
+
+/* Vehicles - Margalla Teal */
+
+.kpi-default .kpi-icon {
+  background: #e7f7f9;
+  color: #0797a8;
+}
+
+
+/* Drivers - Soft Blue */
+
+.kpi-info .kpi-icon {
+  background: #eaf3ff;
+  color: #3f82c4;
+}
+
+
+/* Monthly KM - Soft Purple */
+
+.kpi-success .kpi-icon {
+  background: #f0edff;
+  color: #7462d8;
+}
+
+
+/* Alerts - Soft Orange */
+
+.kpi-warning .kpi-icon {
+  background: #fff3df;
+  color: #d98b20;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1100px) {
+  .kpi-card {
+    padding: 16px;
+  }
+
+  .kpi-value {
+    font-size: 23px;
+  }
+}
+
+@media (max-width: 700px) {
+  .kpi-card {
+    padding: 15px;
+  }
+
+  .kpi-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .kpi-value {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .kpi-card {
+    padding: 14px;
+  }
+
+  .kpi-title {
+    font-size: 9px;
+  }
+
+  .kpi-value {
+    font-size: 21px;
+  }
+}

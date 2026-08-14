@@ -9,6 +9,7 @@ import Welcome from "./pages/Welcome/Welcome";
 import { useAuth } from "./context/AuthContext";
 import DriverDashboard from "./pages/DriverDashboard/DriverDashboard";
 import RoleProtectedRoute from "./components/auth/RoleProtectedRoute";
+import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 function Dashboard() {
   const { user, profile, loading } = useAuth();
     const { logout } = useAuth();
@@ -45,7 +46,7 @@ function App() {
   path="/dashboard"
   element={
     <RoleProtectedRoute role="admin">
-      <Dashboard />
+      <AdminDashboard/>
     </RoleProtectedRoute>
   }
 />

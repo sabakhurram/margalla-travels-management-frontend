@@ -1,0 +1,142 @@
+.mileage-chart-card {
+  min-width: 0;
+
+  padding: 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #e8edf2;
+  border-radius: 12px;
+
+  box-shadow: 0 2px 8px rgba(30, 55, 80, 0.03);
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.mileage-chart-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 16px;
+}
+
+.mileage-chart-header h3 {
+  margin: 0;
+
+  color: #172033;
+
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.mileage-chart-header p {
+  margin: 5px 0 0;
+
+  color: #8a96a5;
+
+  font-size: 10px;
+}
+
+/* =========================
+   PERIOD
+========================= */
+
+.mileage-chart-period {
+  padding: 7px 10px;
+
+  border: 1px solid #e3e9ee;
+  border-radius: 7px;
+
+  color: #536274;
+
+  background: #ffffff;
+
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+/* =========================
+   CHART
+========================= */
+
+.mileage-chart-wrapper {
+  width: 100%;
+  height: 250px;
+}
+
+/* =========================
+   LEGEND
+========================= */
+
+.mileage-legend {
+  display: flex;
+  align-items: center;
+
+  gap: 18px;
+
+  margin-top: 8px;
+  padding-top: 12px;
+
+  border-top: 1px solid #edf1f5;
+}
+
+.mileage-legend-item {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  color: #8995a4;
+
+  font-size: 9px;
+}
+
+.mileage-legend-item strong {
+  color: #536274;
+
+  font-weight: 600;
+}
+
+.legend-dot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+}
+
+.legend-dot.normal {
+  background: #0797a8;
+}
+
+.legend-dot.warning {
+  background: #e6a23c;
+}
+
+.legend-dot.critical {
+  background: #e85b5b;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 500px) {
+  .mileage-chart-card {
+    padding: 16px;
+  }
+
+  .mileage-chart-wrapper {
+    height: 230px;
+  }
+
+  .mileage-legend {
+    flex-wrap: wrap;
+
+    gap: 10px;
+  }
+}
