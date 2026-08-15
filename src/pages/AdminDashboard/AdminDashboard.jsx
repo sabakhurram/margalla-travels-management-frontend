@@ -7,6 +7,7 @@ import MileageChart from "./Overview/MileageChart";
 import VehicleStatusChart from "./Overview/VehicleStatusChart";
 import RecentActivity from "./Overview/RecentActivity";
 import Categories from "./Categories/Categories";
+import Vehicles from "./Vehicles/Vehicles";
 import {
   CarFront,
   Users,
@@ -106,7 +107,9 @@ function AdminDashboard() {
   {activeTab === "categories" && (
     <Categories />
   )}
-
+ {activeTab === "vehicles" && (
+    <Vehicles />
+  )}
 </div>
 
   
