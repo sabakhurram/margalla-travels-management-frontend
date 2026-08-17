@@ -9,6 +9,7 @@ import RecentActivity from "./Overview/RecentActivity";
 import Categories from "./Categories/Categories";
 import Vehicles from "./Vehicles/Vehicles";
 import Drivers from "./Drivers/Drivers";
+import Mileage from "./Mileage/Mileage";
 import {
   CarFront,
   Users,
@@ -114,6 +115,9 @@ function AdminDashboard() {
    {activeTab === "drivers" && (
     <Drivers />
   )}
+  {activeTab === "mileage" && (
+  <Mileage />
+)}
 </div>
 
   
