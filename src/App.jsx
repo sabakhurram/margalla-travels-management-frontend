@@ -10,6 +10,7 @@ import { useAuth } from "./context/AuthContext";
 import DriverDashboard from "./pages/DriverDashboard/DriverDashboard";
 import RoleProtectedRoute from "./components/auth/RoleProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
+import SetPassword from "./pages/SetPassword/SetPassword";
 function Dashboard() {
   const { user, profile, loading } = useAuth();
     const { logout } = useAuth();
@@ -41,7 +42,10 @@ function App() {
         <Routes>
           <Route path="/" element={<Welcome />} />
           <Route path="/login" element={<Login />} />
-
+<Route
+  path="/set-password"
+  element={<SetPassword />}
+/>
          <Route
   path="/dashboard"
   element={
