@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
-import { Plus , Pencil,Trash2 } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Gauge,
+} from "lucide-react";
 
 import "./Categories.css";
 
@@ -20,6 +25,10 @@ const [editCategoryName, setEditCategoryName] = useState("");
 const [updating, setUpdating] = useState(false);
 const [deletingCategory, setDeletingCategory] = useState(null);
 const [deleting, setDeleting] = useState(false);
+const [monthlyLimits, setMonthlyLimits] = useState({});
+const [monthlyLimitCategory, setMonthlyLimitCategory] = useState(null);
+const [monthlyLimit, setMonthlyLimit] = useState("");
+const [savingMonthlyLimit, setSavingMonthlyLimit] = useState(false);
   // Fetch categories
   const fetchCategories = async () => {
     try {
@@ -46,6 +55,10 @@ const [deleting, setDeleting] = useState(false);
       }
 
       setCategories(data.categories);
+
+data.categories.forEach((category) => {
+  fetchMonthlyLimit(category.id);
+});
     } catch (error) {
       console.error("Fetch categories error:", error);
       setError(error.message);
@@ -140,6 +153,95 @@ const handleDelete = async () => {
     setError(error.message);
   } finally {
     setDeleting(false);
+  }
+};
+const fetchMonthlyLimit = async (categoryId) => {
+  try {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+
+    const response = await fetch(
+      `http://localhost:5000/api/categories/${categoryId}/monthly-limit?year=${year}&month=${month}`,
+      {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Failed to fetch monthly limit"
+      );
+    }
+
+    setMonthlyLimits((prev) => ({
+      ...prev,
+      [categoryId]: data.monthlyLimit,
+    }));
+  } catch (error) {
+    console.error("Fetch monthly limit error:", error);
+  }
+};
+const handleSaveMonthlyLimit = async (e) => {
+  e.preventDefault();
+
+  if (!monthlyLimit || Number(monthlyLimit) <= 0) {
+    return;
+  }
+
+  try {
+    setSavingMonthlyLimit(true);
+    setError("");
+
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
+
+    const response = await fetch(
+      `http://localhost:5000/api/categories/${monthlyLimitCategory.id}/monthly-limit`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({
+          year,
+          month,
+            limit_km: Number(monthlyLimit),
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    console.log("Save monthly limit response:", data);
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Failed to save monthly limit"
+      );
+    }
+
+    setMonthlyLimits((prev) => ({
+      ...prev,
+      [monthlyLimitCategory.id]: data.monthlyLimit,
+    }));
+
+    setMonthlyLimitCategory(null);
+    setMonthlyLimit("");
+
+  } catch (error) {
+    console.error("Save monthly limit error:", error);
+    setError(error.message);
+  } finally {
+    setSavingMonthlyLimit(false);
   }
 };
   // Fetch when authenticated session is available
@@ -431,9 +533,50 @@ const handleDelete = async () => {
   </div>
 
   <span>
-    Created{" "}
-    {new Date(category.created_at).toLocaleDateString()}
-  </span>
+  Created{" "}
+  {new Date(category.created_at).toLocaleDateString()}
+</span>
+
+<div className="category-monthly-limit">
+
+ <div className="category-monthly-limit-info">
+  <div className="category-monthly-limit-label">
+    <Gauge size={15} />
+    <span>Monthly Mileage Limit</span>
+  </div>
+
+  <strong>
+    {monthlyLimits[category.id]
+      ? `${Number(
+          monthlyLimits[category.id].limit_km
+        ).toLocaleString()} KM`
+      : "Not set"}
+  </strong>
+
+  <small>
+    {new Date().toLocaleString("default", {
+      month: "long",
+      year: "numeric",
+    })}
+  </small>
+</div>
+
+  <button
+    className="category-limit-button"
+    onClick={() => {
+      setMonthlyLimitCategory(category);
+
+      setMonthlyLimit(
+        monthlyLimits[category.id]?.  limit_km || ""
+      );
+    }}
+  >
+    {monthlyLimits[category.id]
+      ? "Edit Limit"
+      : "Set Limit"}
+  </button>
+
+</div>
 </div>
             ))}
 
@@ -481,6 +624,90 @@ const handleDelete = async () => {
         </button>
 
       </div>
+
+    </div>
+
+  </div>
+)}
+{monthlyLimitCategory && (
+  <div className="delete-modal-overlay">
+
+    <div className="monthly-limit-modal">
+
+      <div className="monthly-limit-modal-header">
+
+        <div className="monthly-limit-modal-icon">
+          <Gauge size={22} />
+        </div>
+
+        <div>
+          <h3>Monthly Mileage Limit</h3>
+
+          <p>
+            Set the monthly KM limit for{" "}
+            <strong>
+              {monthlyLimitCategory.name}
+            </strong>
+          </p>
+        </div>
+
+      </div>
+
+      <form onSubmit={handleSaveMonthlyLimit}>
+
+        <div className="category-form-group">
+
+          <label htmlFor="monthly-km-limit">
+            KM Limit
+          </label>
+
+          <input
+            id="monthly-km-limit"
+            type="number"
+            min="1"
+            value={monthlyLimit}
+            onChange={(e) =>
+              setMonthlyLimit(e.target.value)
+            }
+            placeholder="e.g. 3000"
+            disabled={savingMonthlyLimit}
+          />
+
+          <span className="monthly-limit-helper">
+            This limit applies to the current month.
+          </span>
+
+        </div>
+
+        <div className="category-form-actions">
+
+          <button
+            type="button"
+            onClick={() => {
+              setMonthlyLimitCategory(null);
+              setMonthlyLimit("");
+            }}
+            disabled={savingMonthlyLimit}
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            disabled={
+              savingMonthlyLimit ||
+              !monthlyLimit ||
+              Number(monthlyLimit) <= 0
+            }
+          >
+            {savingMonthlyLimit
+              ? "Saving..."
+              : "Save Limit"}
+          </button>
+
+        </div>
+
+      </form>
 
     </div>
 

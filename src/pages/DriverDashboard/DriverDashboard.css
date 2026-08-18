@@ -1,0 +1,550 @@
+/* ================================
+   DRIVER DASHBOARD
+================================ */
+
+.driver-dashboard {
+  min-height: 100vh;
+  padding: 32px;
+  background: #f5f8fa;
+  color: #17324d;
+}
+
+
+/* ================================
+   HEADER
+================================ */
+
+.driver-dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.driver-welcome {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.driver-welcome-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: #0797a8;
+  color: white;
+}
+
+.driver-welcome h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #17324d;
+}
+
+.driver-welcome p {
+  margin: 5px 0 0;
+  color: #6b7c8f;
+  font-size: 14px;
+}
+
+.driver-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #d9e3e8;
+  background: white;
+  color: #17324d;
+  padding: 10px 16px;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.driver-logout-btn:hover {
+  border-color: #0797a8;
+  color: #0797a8;
+}
+
+
+/* ================================
+   SUMMARY CARDS
+================================ */
+
+.driver-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  margin-bottom: 24px;
+}
+
+.driver-card {
+  background: white;
+  border: 1px solid #e3eaee;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 3px 12px rgba(23, 50, 77, 0.04);
+}
+
+.driver-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.driver-card-icon {
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #e6f6f8;
+  color: #0797a8;
+}
+
+.driver-card-header h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #17324d;
+}
+
+.driver-card-header p {
+  margin: 4px 0 0;
+  color: #7a8997;
+  font-size: 13px;
+}
+
+
+/* ================================
+   VEHICLE
+================================ */
+
+.vehicle-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.vehicle-main strong {
+  font-size: 24px;
+  color: #17324d;
+}
+
+.vehicle-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.vehicle-status.active {
+  background: #e7f7ef;
+  color: #16834b;
+}
+
+.vehicle-status.inactive {
+  background: #f1f3f5;
+  color: #687684;
+}
+
+.vehicle-status.maintenance {
+  background: #fff4df;
+  color: #b56b00;
+}
+
+.vehicle-model {
+  margin: 8px 0 16px;
+  font-size: 15px;
+  color: #536779;
+}
+
+.vehicle-category {
+  margin: 0;
+  font-size: 14px;
+  color: #7a8997;
+}
+
+.vehicle-category strong {
+  color: #17324d;
+}
+
+.no-vehicle {
+  padding: 18px;
+  border-radius: 9px;
+  background: #f8fafb;
+  color: #7a8997;
+  font-size: 14px;
+}
+
+
+/* ================================
+   MONTHLY MILEAGE
+================================ */
+
+.mileage-number {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.mileage-number strong {
+  font-size: 28px;
+  color: #17324d;
+}
+
+.mileage-number span {
+  color: #7a8997;
+  font-size: 14px;
+}
+
+.mileage-progress {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #e8eef1;
+}
+
+.mileage-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #0797a8;
+  transition: width 0.3s ease;
+}
+
+.mileage-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.mileage-stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mileage-stats span {
+  color: #8795a1;
+  font-size: 12px;
+}
+
+.mileage-stats strong {
+  color: #17324d;
+  font-size: 14px;
+}
+
+
+/* ================================
+   RECORD MILEAGE
+================================ */
+
+.driver-mileage-card {
+  background: white;
+  border: 1px solid #dce8ec;
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 5px 18px rgba(23, 50, 77, 0.06);
+}
+
+.driver-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 28px;
+}
+
+.driver-section-icon {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  background: #0797a8;
+  color: white;
+}
+
+.driver-section-heading h2 {
+  margin: 0;
+  font-size: 21px;
+  color: #17324d;
+}
+
+.driver-section-heading p {
+  margin: 4px 0 0;
+  color: #7a8997;
+  font-size: 13px;
+}
+
+
+/* ================================
+   FORM
+================================ */
+
+.mileage-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #304b63;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d7e1e6;
+  border-radius: 9px;
+  background: #fbfcfd;
+  color: #17324d;
+  padding: 11px 13px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: #0797a8;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(7, 151, 168, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+}
+
+.form-group-full {
+  grid-column: 1 / -1;
+}
+
+
+/* ================================
+   CALCULATED KM
+================================ */
+
+.mileage-calculated {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  grid-column: 1 / -1;
+  padding: 15px 18px;
+  border-radius: 10px;
+  background: #eef9fa;
+  border: 1px solid #ccecef;
+}
+
+.mileage-calculated span {
+  color: #536779;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.mileage-calculated strong {
+  color: #0797a8;
+  font-size: 20px;
+}
+
+
+/* ================================
+   FORM ACTION
+================================ */
+
+.mileage-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  grid-column: 1 / -1;
+  padding-top: 4px;
+}
+
+.mileage-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 9px;
+  background: #0797a8;
+  color: white;
+  padding: 12px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.mileage-submit-btn:hover:not(:disabled) {
+  background: #067f8d;
+  transform: translateY(-1px);
+}
+
+.mileage-submit-btn:disabled {
+  background: #b8c8ce;
+  cursor: not-allowed;
+}
+
+
+/* ================================
+   LOADING / ERROR
+================================ */
+
+.driver-dashboard-loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #536779;
+  font-size: 15px;
+}
+
+.driver-dashboard-error {
+  margin: 32px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  background: #fff1f1;
+  border: 1px solid #f0cccc;
+  color: #b42323;
+}
+
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 900px) {
+  .driver-summary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .driver-dashboard {
+    padding: 20px;
+  }
+
+  .driver-dashboard-header {
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .driver-welcome h1 {
+    font-size: 23px;
+  }
+
+  .mileage-form {
+    grid-template-columns: 1fr;
+  }
+
+  .form-group-full,
+  .mileage-calculated,
+  .mileage-form-actions {
+    grid-column: auto;
+  }
+
+  .mileage-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .driver-mileage-card {
+    padding: 20px;
+  }
+}
+/* ================================
+   HEADER TEXT ALIGNMENT
+================================ */
+
+.driver-welcome-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.driver-welcome-text h1 {
+  margin: 0;
+  text-align: left;
+}
+
+.driver-welcome-text p {
+  margin: 5px 0 0;
+  text-align: left;
+}
+
+
+/* ================================
+   CARD HEADING ALIGNMENT
+================================ */
+
+.driver-card-header > div:last-child {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.driver-card-header h2 {
+  margin: 0;
+  text-align: left;
+}
+
+.driver-card-header p {
+  margin: 4px 0 0;
+  text-align: left;
+}
+
+
+/* ================================
+   RECORD MILEAGE HEADING
+================================ */
+
+.driver-section-heading > div:last-child {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.driver-section-heading h2 {
+  margin: 0;
+  text-align: left;
+}
+
+.driver-section-heading p {
+  margin: 4px 0 0;
+  text-align: left;
+}

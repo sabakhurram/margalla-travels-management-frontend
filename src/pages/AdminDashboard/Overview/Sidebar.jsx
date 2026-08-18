@@ -9,7 +9,7 @@ import {
   Menu,
   X,
 } from "lucide-react";
-
+import { useAuth } from "../../../context/AuthContext";
 // import logo from "../../assets/logo2.png";
 import logo from "../../../assets/logo2.png";
 
@@ -21,6 +21,7 @@ function Sidebar({
   activeTab,
   setActiveTab,
 }) {
+  const { logout } = useAuth();
   const navigationItems = [
    {
   label: "Dashboard",
@@ -134,10 +135,13 @@ function Sidebar({
             </div>
           </div>
 
-          <button className="sidebar-logout">
-            <LogOut size={17} />
-            <span>Sign out</span>
-          </button>
+         <button
+  className="sidebar-logout"
+  onClick={logout}
+>
+  <LogOut size={17} />
+  <span>Sign out</span>
+</button>
         </div>
       </aside>
     </>
