@@ -548,3 +548,114 @@
   margin: 4px 0 0;
   text-align: left;
 }
+/* =========================================
+   MILEAGE HISTORY
+========================================= */
+
+.mileage-history-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 24px;
+}
+
+.mileage-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.mileage-history-table th,
+.mileage-history-table td {
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.mileage-history-table th {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e3a5f;
+  background: #f6fafb;
+  border-bottom: 1px solid #dce7eb;
+  white-space: nowrap;
+}
+
+.mileage-history-table td {
+  font-size: 14px;
+  color: #34495e;
+  border-bottom: 1px solid #edf2f4;
+}
+
+.mileage-history-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.mileage-history-table th:nth-child(1),
+.mileage-history-table td:nth-child(1) {
+  width: 13%;
+}
+
+.mileage-history-table th:nth-child(2),
+.mileage-history-table td:nth-child(2) {
+  width: 17%;
+}
+
+.mileage-history-table th:nth-child(3),
+.mileage-history-table td:nth-child(3) {
+  width: 17%;
+}
+
+.mileage-history-table th:nth-child(4),
+.mileage-history-table td:nth-child(4) {
+  width: 13%;
+}
+
+.mileage-history-table th:nth-child(5),
+.mileage-history-table td:nth-child(5) {
+  width: 13%;
+}
+
+.mileage-history-table th:nth-child(6),
+.mileage-history-table td:nth-child(6) {
+  width: 27%;
+}
+.mileage-remarks {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.trip-type {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.trip-type.local {
+  background: #e6f7f8;
+  color: #0797a8;
+}
+
+.trip-type.outstation {
+  background: #eef3f8;
+  color: #1e3a5f;
+}
+.no-mileage-history {
+  padding: 32px 20px;
+  text-align: center;
+  color: #718096;
+  font-size: 14px;
+}
+@media (max-width: 900px) {
+  .mileage-history-table {
+    min-width: 850px;
+  }
+
+  .mileage-history-table-wrapper {
+    overflow-x: auto;
+  }
+}

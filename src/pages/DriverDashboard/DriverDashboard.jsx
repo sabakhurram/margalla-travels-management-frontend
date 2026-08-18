@@ -8,9 +8,12 @@ import {
   UserRound,
   CircleCheck,
   AlertCircle,
+    ClipboardList,
 } from "lucide-react";
 
 import { useAuth } from "../../context/AuthContext";
+
+
 
 import "./DriverDashboard.css";
 
@@ -20,14 +23,14 @@ function DriverDashboard() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+const [mileageHistory, setMileageHistory] = useState([]);
   // Mileage form
   const [entryDate, setEntryDate] = useState(
     new Date().toISOString().split("T")[0]
   );
   const [startingMileage, setStartingMileage] = useState("");
   const [endingMileage, setEndingMileage] = useState("");
-  const [tripType, setTripType] = useState("official");
+  const [tripType, setTripType] = useState("local");
   const [remarks, setRemarks] = useState("");
 
   useEffect(() => {
@@ -51,6 +54,22 @@ function DriverDashboard() {
       );
 
       const data = await response.json();
+console.log("Driver dashboard data:", data);
+
+const historyResponse = await fetch(
+  "http://localhost:5000/api/mileage/my-history",
+  {
+    headers: {
+      Authorization: `Bearer ${session.access_token}`,
+    },
+  }
+);
+
+const historyData = await historyResponse.json();
+
+console.log("Driver mileage history:", historyData);
+setMileageHistory(historyData.mileage || []);
+
 
       if (!response.ok) {
         throw new Error(
@@ -59,6 +78,11 @@ function DriverDashboard() {
       }
 
       setDashboardData(data);
+      setStartingMileage(
+  data.startingOdometer !== null
+    ? String(data.startingOdometer)
+    : ""
+);
     } catch (error) {
       console.error(
         "Fetch driver dashboard error:",
@@ -112,7 +136,58 @@ function DriverDashboard() {
   const vehicle = dashboardData?.vehicle;
   const monthlyMileage =
     dashboardData?.monthlyMileage;
+const handleMileageSubmit = async (e) => {
+  e.preventDefault();
 
+  if (!vehicle) {
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/mileage",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          entry_date: entryDate,
+          starting_mileage: startingMileage,
+          ending_mileage: endingMileage,
+          trip_type: tripType,
+          remarks,
+        }),
+      }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        result.message || "Failed to submit mileage"
+      );
+    }
+
+    alert("Mileage submitted successfully");
+
+    setStartingMileage("");
+    setEndingMileage("");
+    setRemarks("");
+
+
+    fetchDashboard();
+
+  } catch (error) {
+    console.error(
+      "Submit mileage error:",
+      error
+    );
+
+    alert(error.message);
+  }
+};
   return (
     <div className="driver-dashboard">
 
@@ -325,12 +400,12 @@ function DriverDashboard() {
                 setTripType(e.target.value)
               }
             >
-              <option value="official">
-                Official
+              <option value="local">
+                Local
               </option>
 
-              <option value="personal">
-                Personal
+              <option value="outstation">
+               Outstation
               </option>
             </select>
 
@@ -341,19 +416,18 @@ function DriverDashboard() {
           <div className="form-group">
 
             <label>
-              Starting Mileage (KM)
+              Starting Odometer (KM)
             </label>
-
-            <input
-              type="number"
-              min="0"
-              placeholder="e.g. 45200"
-              value={startingMileage}
-              onChange={(e) =>
-                setStartingMileage(e.target.value)
-              }
-            />
-
+<input
+  type="number"
+  min="0"
+  placeholder="Enter starting odometer"
+  value={startingMileage}
+  onChange={(e) =>
+    setStartingMileage(e.target.value)
+  }
+  readOnly={startingMileage !== ""}
+/>
           </div>
 
 
@@ -361,13 +435,13 @@ function DriverDashboard() {
           <div className="form-group">
 
             <label>
-              Ending Mileage (KM)
+              Ending Odometer (KM)
             </label>
 
             <input
               type="number"
               min="0"
-              placeholder="e.g. 45275"
+              placeholder="Enter Ending Odometer"
               value={endingMileage}
               onChange={(e) =>
                 setEndingMileage(e.target.value)
@@ -410,20 +484,112 @@ function DriverDashboard() {
 
           <div className="mileage-form-actions">
 
-            <button
-              type="button"
-              className="mileage-submit-btn"
-              disabled={!vehicle}
-            >
-              <Route size={18} />
-              Submit Mileage
-            </button>
+   <button
+  type="button"
+  className="mileage-submit-btn"
+  disabled={!vehicle}
+  onClick={handleMileageSubmit}
+>
+  <Route size={18} />
+  Submit Mileage
+</button>
+              
 
           </div>
 
         </div>
 
       </div>
+      {/* Mileage History */}
+<div className="driver-mileage-card">
+
+  <div className="driver-section-heading">
+
+    <div className="driver-section-icon">
+      <ClipboardList size={24} />
+    </div>
+
+    <div>
+      <h2>Mileage History</h2>
+      <p>
+        Your previously submitted mileage records
+      </p>
+    </div>
+
+  </div>
+
+  {mileageHistory.length === 0 ? (
+    <div className="no-mileage-history">
+      No mileage records found.
+    </div>
+  ) : (
+    <div className="mileage-history-table-wrapper">
+
+      <table className="mileage-history-table">
+
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Starting Odometer</th>
+            <th>Ending Odometer</th>
+            <th>KM Covered</th>
+            <th>Trip Type</th>
+            <th>Remarks</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {mileageHistory.map((entry) => (
+            <tr key={entry.id}>
+
+              <td>
+                {new Date(
+                  entry.entry_date
+                ).toLocaleDateString()}
+              </td>
+
+              <td>
+                {Number(
+                  entry.starting_mileage
+                ).toLocaleString()} KM
+              </td>
+
+              <td>
+                {Number(
+                  entry.ending_mileage
+                ).toLocaleString()} KM
+              </td>
+
+              <td>
+                {Number(
+                  entry.km_covered
+                ).toLocaleString()} KM
+              </td>
+
+              <td>
+                <span
+                  className={`trip-type ${entry.trip_type}`}
+                >
+                  {entry.trip_type}
+                </span>
+              </td>
+
+              <td className="mileage-remarks">
+                {entry.remarks || "—"}
+              </td>
+
+            </tr>
+          ))}
+
+        </tbody>
+
+      </table>
+
+    </div>
+  )}
+
+</div>
 
     </div>
   );
