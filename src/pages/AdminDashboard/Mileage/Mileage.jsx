@@ -5,6 +5,7 @@ import {
   ClipboardList,
   Route,
   CalendarDays,
+    AlertTriangle,
 } from "lucide-react";
 import {
   LineChart,
@@ -224,7 +225,7 @@ setChartData(prepareChartData(entries));
 
       <ResponsiveContainer
         width="100%"
-        height={300}
+        height="100%"
       >
         <LineChart
           data={chartData}
@@ -330,7 +331,7 @@ setChartData(prepareChartData(entries));
                   <th>Ending</th>
                   <th>KM Covered</th>
                   <th>Trip Type</th>
-                  <th>Remarks</th>
+                  <th>Monthly Status</th>
                 </tr>
               </thead>
 
@@ -411,11 +412,35 @@ setChartData(prepareChartData(entries));
 
                     {/* REMARKS */}
 
-                    <td>
-                      <span className="mileage-remarks-text">
-                        {entry.remarks || "—"}
-                      </span>
-                    </td>
+                    {/* MONTHLY STATUS */}
+
+<td>
+  {entry.isLatestEntry ? (
+    entry.monthlyStatus?.overLimit > 0 ? (
+      <span className="mileage-limit-warning">
+        <AlertTriangle size={14} />
+        <span>
+          {Number(
+            entry.monthlyStatus.overLimit
+          ).toLocaleString()}{" "}
+          KM over limit
+        </span>
+      </span>
+    ) : (
+      <span className="mileage-limit-remaining">
+        {Number(
+          entry.monthlyStatus?.remaining || 0
+        ).toLocaleString()}{" "}
+        KM remaining
+      </span>
+    )
+  ) : (
+    <span className="mileage-status-placeholder">
+       No limit
+    </span>
+  )}
+
+</td>
 
                   </tr>
 

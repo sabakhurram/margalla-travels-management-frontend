@@ -10,6 +10,7 @@ import Categories from "./Categories/Categories";
 import Vehicles from "./Vehicles/Vehicles";
 import Drivers from "./Drivers/Drivers";
 import Mileage from "./Mileage/Mileage";
+import AuditLogs from "./AuditLogs/AuditLogs";
 import {
   CarFront,
   Users,
@@ -118,6 +119,7 @@ function AdminDashboard() {
   {activeTab === "mileage" && (
   <Mileage />
 )}
+{activeTab === "audit-logs" &&(<AuditLogs />) }
 </div>
 
   

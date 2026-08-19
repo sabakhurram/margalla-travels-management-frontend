@@ -632,7 +632,7 @@
 }
 .mileage-chart {
   width: 100%;
-  height: 250px;
+  height: 300px;
 }
 
 /* =========================================
@@ -648,3 +648,86 @@
   height: 220px;
 }
 }
+/* =========================================
+   MONTHLY MILEAGE STATUS
+========================================= */
+
+.mileage-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mileage-status-icon {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mileage-status-warning {
+  color: #c53030;
+}
+
+.mileage-status-warning .mileage-status-icon {
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  color: #c53030;
+}
+
+.mileage-status-ok {
+  color: #078a76;
+}
+
+.mileage-status-ok .mileage-status-icon {
+  background: #e7f7f5;
+  border: 1px solid #bce5df;
+  color: #078a76;
+}
+ /* =========================================
+   MILEAGE LIMIT STATUS
+========================================= */
+
+.mileage-limit-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 9px;
+  background: #fff5f5;
+  color: #c53030;
+  border: 1px solid #fed7d7;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.mileage-limit-warning svg {
+  flex-shrink: 0;
+}
+
+.mileage-limit-remaining {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  background: #e7f7f5;
+  color: #0797a8;
+  border: 1px solid #c7e8ed;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.mileage-status-placeholder {
+  color: #a0aec0;
+  font-size: 13px;
+} 

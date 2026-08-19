@@ -51,7 +51,7 @@ function Sidebar({
 {
   label: "Audit Logs",
   icon: ClipboardList,
-  tab: "audit",
+  tab: "audit-logs",
 },
   ];
 
