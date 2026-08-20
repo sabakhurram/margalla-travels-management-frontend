@@ -160,37 +160,6 @@
 }
 
 
-/* =========================================
-   COLUMN WIDTHS
-
-   Total = 100%
-========================================= */
-
-.audit-logs-table th:nth-child(1),
-.audit-logs-table td:nth-child(1) {
-  width: 18%;
-}
-
-.audit-logs-table th:nth-child(2),
-.audit-logs-table td:nth-child(2) {
-  width: 15%;
-}
-
-.audit-logs-table th:nth-child(3),
-.audit-logs-table td:nth-child(3) {
-  width: 15%;
-}
-
-.audit-logs-table th:nth-child(4),
-.audit-logs-table td:nth-child(4) {
-  width: 12%;
-}
-
-.audit-logs-table th:nth-child(5),
-.audit-logs-table td:nth-child(5) {
-  width: 40%;
-}
-
 
 /* =========================================
    TABLE HEADER
@@ -535,15 +504,5 @@
 
     padding: 35px 18px;
   }
-
-  /*
-    On mobile the table intentionally becomes
-    horizontally scrollable instead of squeezing
-    the columns and destroying alignment.
-  */
-
-  .audit-logs-table {
-    min-width: 900px;
-  }
-
 }
+

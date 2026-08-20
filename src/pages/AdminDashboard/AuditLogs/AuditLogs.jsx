@@ -84,6 +84,13 @@ const formatFieldName = (key) => {
     .replace(/_/g, " ")
     .replace(/\b\w/g, (char) => char.toUpperCase());
 };
+const formatTableName = (tableName) => {
+  if (!tableName) return "Unknown";
+
+  return tableName
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+};
 
 const getChangedFields = (oldValue, newValue) => {
   if (!oldValue || !newValue) return [];
@@ -233,6 +240,7 @@ const formatAuditDetails = (log) => {
   <tr>
     <th>Date & Time</th>
     <th>Changed By</th>
+      <th>Table</th>
     <th>Action</th>
     <th>Details</th>
   </tr>
@@ -256,6 +264,11 @@ const formatAuditDetails = (log) => {
           "Unknown User"}
       </td>
 
+<td>
+  <span className="audit-table-name">
+    {formatTableName(log.table_name)}
+  </span>
+</td>
       {/* ACTION */}
 
       <td>
