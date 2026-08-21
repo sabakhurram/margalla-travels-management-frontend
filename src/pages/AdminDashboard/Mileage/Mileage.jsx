@@ -2,104 +2,175 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import {
   Gauge,
-  ClipboardList,
-  Route,
   CalendarDays,
-    AlertTriangle,
+  Filter,
+  AlertTriangle,
+  CheckCircle2,
+  CircleAlert,
+  MapPin,
+  Route,
 } from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 import "./Mileage.css";
 
 function Mileage() {
-    const [chartData, setChartData] = useState([]);
-    const prepareChartData = (entries) => {
-  const lastSevenDays = [];
-
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date();
-
-    date.setDate(date.getDate() - i);
-
-    const dateString = date
-      .toISOString()
-      .split("T")[0];
-
-    const totalKm = entries
-      .filter((entry) => entry.entry_date === dateString)
-      .reduce(
-        (total, entry) =>
-          total + Number(entry.km_covered || 0),
-        0
-      );
-
-    lastSevenDays.push({
-      date: dateString,
-      label: date.toLocaleDateString("en-US", {
-        weekday: "short",
-      }),
-      km: totalKm,
-    });
-  }
-
-  return lastSevenDays;
-};
   const { session } = useAuth();
 
-  const [mileage, setMileage] = useState([]);
+  const [monitoring, setMonitoring] = useState([]);
+  const [filter, setFilter] = useState("today");
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  /*
+  ====================================================
+  FETCH MILEAGE MONITORING
+  ====================================================
+  */
+
   useEffect(() => {
     if (session?.access_token) {
-      fetchMileage();
+      fetchMileageMonitoring();
     }
-  }, [session]);
+  }, [session, filter, selectedDate]);
 
-  const fetchMileage = async () => {
+  const fetchMileageMonitoring = async () => {
     try {
       setLoading(true);
       setError("");
 
-      const response = await fetch(
-        "http://localhost:5000/api/mileage",
-        {
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
-          },
-        }
-      );
+      let url =
+        "http://localhost:5000/api/mileage/monitoring";
+
+      if (filter === "today") {
+        url += "?filter=today";
+      }
+
+      if (filter === "month") {
+        url += "?filter=month";
+      }
+
+      if (filter === "date") {
+        url += `?filter=date&date=${selectedDate}`;
+      }
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
 
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(
-          data.message || "Failed to fetch mileage"
+          data.message ||
+            "Failed to fetch mileage monitoring"
         );
       }
-const entries = data.mileage || [];
 
-setMileage(entries);
-setChartData(prepareChartData(entries));
+      setMonitoring(data.monitoring || []);
     } catch (error) {
-      console.error("Fetch mileage error:", error);
+      console.error(
+        "Fetch mileage monitoring error:",
+        error
+      );
+
       setError(error.message);
+      setMonitoring([]);
     } finally {
       setLoading(false);
     }
   };
 
+  /*
+  ====================================================
+  FILTER HANDLER
+  ====================================================
+  */
+
+  const handleFilterChange = (value) => {
+    setFilter(value);
+
+    if (value === "date") {
+      setSelectedDate(
+        new Date()
+          .toISOString()
+          .split("T")[0]
+      );
+    }
+  };
+
+  /*
+  ====================================================
+  STATUS
+  ====================================================
+  */
+
+  const getStatus = (status) => {
+    if (status === "exceeded") {
+      return {
+        label: "Exceeded",
+        className:
+          "mileage-monitor-status mileage-monitor-status-danger",
+        icon: <AlertTriangle size={14} />,
+      };
+    }
+
+    if (status === "warning") {
+      return {
+        label: "Warning",
+        className:
+          "mileage-monitor-status mileage-monitor-status-warning",
+        icon: <CircleAlert size={14} />,
+      };
+    }
+
+    return {
+      label: "On Track",
+      className:
+        "mileage-monitor-status mileage-monitor-status-success",
+      icon: <CheckCircle2 size={14} />,
+    };
+  };
+
+  /*
+  ====================================================
+  FORMAT NUMBER
+  ====================================================
+  */
+
+  const formatNumber = (value) =>
+    Number(value || 0).toLocaleString(undefined, {
+      maximumFractionDigits: 2,
+    });
+
+  /*
+  ====================================================
+  FILTER TITLE
+  ====================================================
+  */
+
+  const getTableTitle = () => {
+    if (filter === "today") {
+      return "Today's Mileage";
+    }
+
+    if (filter === "month") {
+      return "Monthly Mileage";
+    }
+
+    return "Mileage for Selected Date";
+  };
+
   return (
     <div className="mileage-page">
 
-      {/* ================= HEADER ================= */}
+      {/* ================================================
+          HEADER
+      ================================================= */}
 
       <div className="mileage-header">
 
@@ -113,7 +184,7 @@ setChartData(prepareChartData(entries));
             <h1>Mileage</h1>
 
             <p>
-              Monitor vehicle mileage and daily usage
+              Monitor vehicle mileage and usage
             </p>
           </div>
 
@@ -121,7 +192,10 @@ setChartData(prepareChartData(entries));
 
       </div>
 
-      {/* ================= ERROR ================= */}
+
+      {/* ================================================
+          ERROR
+      ================================================= */}
 
       {error && (
         <div className="mileage-error">
@@ -129,334 +203,750 @@ setChartData(prepareChartData(entries));
         </div>
       )}
 
-    {/* ================= SUMMARY ================= */}
 
-<div className="mileage-summary-grid">
+      {/* ================================================
+          FILTER CARD
+      ================================================= */}
 
-  {/* Total Entries */}
-  <div className="mileage-summary-card">
-    <div className="mileage-summary-icon">
-      <ClipboardList size={21} />
+      <div className="mileage-filter-card">
+
+        <div className="mileage-filter-heading">
+
+          <div className="mileage-filter-icon">
+            <Filter size={18} />
+          </div>
+
+          <div>
+            <strong>View Mileage</strong>
+
+            <span>
+              Choose the mileage period you want to monitor
+            </span>
+          </div>
+
+        </div>
+
+
+        <div className="mileage-filter-controls">
+
+          <button
+            type="button"
+            className={
+              filter === "today"
+                ? "mileage-filter-btn active"
+                : "mileage-filter-btn"
+            }
+            onClick={() =>
+              handleFilterChange("today")
+            }
+          >
+            <CalendarDays size={16} />
+            Today
+          </button>
+
+
+          <button
+            type="button"
+            className={
+              filter === "month"
+                ? "mileage-filter-btn active"
+                : "mileage-filter-btn"
+            }
+            onClick={() =>
+              handleFilterChange("month")
+            }
+          >
+            <Route size={16} />
+            This Month
+          </button>
+
+
+          <button
+            type="button"
+            className={
+              filter === "date"
+                ? "mileage-filter-btn active"
+                : "mileage-filter-btn"
+            }
+            onClick={() =>
+              handleFilterChange("date")
+            }
+          >
+            <CalendarDays size={16} />
+            Select Date
+          </button>
+
+
+          {filter === "date" && (
+            <input
+              type="date"
+              value={selectedDate}
+              max={
+                new Date()
+                  .toISOString()
+                  .split("T")[0]
+              }
+              onChange={(e) =>
+                setSelectedDate(e.target.value)
+              }
+              className="mileage-date-input"
+            />
+          )}
+
+        </div>
+
+      </div>
+
+
+     {/* ================================================
+    TABLE
+================================================= */}
+
+<div className="mileage-monitor-card">
+
+  <div className="mileage-monitor-header">
+<div className="mileage-monitor-heading-content">
+
+  <h2>
+    {getTableTitle()}
+  </h2>
+
+  <p>
+    {filter === "today"
+      ? "Vehicle-wise daily mileage performance"
+      : "Vehicle-wise monthly mileage performance"}
+  </p>
+
+</div>
+
+    <div className="mileage-monitor-count">
+      {monitoring.length} vehicles
     </div>
 
-    <div className="mileage-summary-content">
-      <span>Total Entries</span>
-
-      <strong>
-        {mileage.length}
-      </strong>
-
-      <p>Recorded mileage entries</p>
-    </div>
   </div>
 
 
-  {/* Total KM */}
-  <div className="mileage-summary-card">
-    <div className="mileage-summary-icon">
-      <Route size={21} />
+  {loading ? (
+
+    <div className="mileage-loading">
+      Loading mileage monitoring...
     </div>
 
-    <div className="mileage-summary-content">
-      <span>Total KM</span>
+  ) : monitoring.length === 0 ? (
 
-      <strong>
-        {mileage
-          .reduce(
-            (total, entry) =>
-              total + Number(entry.km_covered || 0),
-            0
-          )
-          .toLocaleString()}
-      </strong>
+    <div className="mileage-empty">
 
-      <p>Distance covered</p>
+      <Gauge size={40} />
+
+      <h3>
+        No mileage data found
+      </h3>
+
+      <p>
+        No vehicles are available for
+        mileage monitoring.
+      </p>
+
     </div>
+
+  ) : (
+
+    <div className="mileage-table-wrapper">
+
+      {/*
+      =====================================================
+      TODAY TABLE
+      DO NOT CHANGE THIS TABLE
+      =====================================================
+      */}
+
+      {filter === "today" ? (
+
+        <table className="mileage-table">
+
+          <thead>
+
+            <tr>
+              <th>Vehicle</th>
+              <th>Driver</th>
+              <th>Trip Type</th>
+
+              <th>Today's Actual</th>
+
+              <th>Daily Expected</th>
+
+              <th>Daily Difference</th>
+
+              <th>Monthly Actual</th>
+
+              <th>Monthly Expected</th>
+
+              <th>Monthly Limit</th>
+
+              <th>Monthly Difference</th>
+
+              <th>Trip Summary</th>
+
+              <th>Status</th>
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            {monitoring.map((item) => {
+
+              const status = getStatus(
+                item.status
+              );
+
+              const localTrips =
+                item.monthlyTrips?.local || 0;
+
+              const outstationTrips =
+                item.monthlyTrips?.outstation || 0;
+
+              const selectedLocalTrips =
+                item.selectedDayTrips?.local || 0;
+
+              const selectedOutstationTrips =
+                item.selectedDayTrips?.outstation || 0;
+
+
+              let tripType = "—";
+
+              if (
+                selectedLocalTrips > 0 &&
+                selectedOutstationTrips > 0
+              ) {
+                tripType = "Local + Outstation";
+
+              } else if (
+                selectedLocalTrips > 0
+              ) {
+                tripType = "Local";
+
+              } else if (
+                selectedOutstationTrips > 0
+              ) {
+                tripType = "Outstation";
+              }
+
+
+              const dailyDifference =
+                Number(
+                  item.selectedDayDifference || 0
+                );
+
+              const monthlyDifference =
+                Number(
+                  item.monthlyDifference || 0
+                );
+
+
+              return (
+
+                <tr key={item.vehicle.id}>
+
+                  {/* VEHICLE */}
+
+                  <td>
+
+                    <div className="mileage-vehicle-cell">
+
+                      <strong>
+                        {item.vehicle.registration_number}
+                      </strong>
+
+                      <span>
+                        {item.vehicle.model}
+                      </span>
+
+                    </div>
+
+                  </td>
+
+
+                  {/* DRIVER */}
+
+                  <td>
+                    {item.driver?.name || "—"}
+                  </td>
+
+
+                  {/* TRIP TYPE */}
+
+                  <td>
+
+                    <span className="mileage-trip-type">
+                      {tripType}
+                    </span>
+
+                  </td>
+
+
+                  {/* TODAY ACTUAL */}
+
+                  <td>
+
+                    <span className="mileage-km">
+
+                      {formatNumber(
+                        item.selectedDayKm
+                      )}{" "}
+                      km
+
+                    </span>
+
+                  </td>
+
+
+                  {/* DAILY EXPECTED */}
+
+                  <td>
+
+                    {formatNumber(
+                      item.dailyExpected
+                    )}{" "}
+                    km
+
+                  </td>
+
+
+                  {/* DAILY DIFFERENCE */}
+
+                  <td>
+
+                    <span
+                      className={
+                        dailyDifference > 0
+                          ? "mileage-difference mileage-difference-warning"
+                          : "mileage-difference mileage-difference-good"
+                      }
+                    >
+
+                      {dailyDifference > 0
+                        ? "+"
+                        : ""}
+
+                      {formatNumber(
+                        dailyDifference
+                      )}{" "}
+                      km
+
+                    </span>
+
+                  </td>
+
+
+                  {/* MONTHLY ACTUAL */}
+
+                  <td>
+
+                    {formatNumber(
+                      item.monthlyActual
+                    )}{" "}
+                    km
+
+                  </td>
+
+
+                  {/* MONTHLY EXPECTED */}
+
+                  <td>
+
+                    {formatNumber(
+                      item.monthlyExpected
+                    )}{" "}
+                    km
+
+                  </td>
+
+
+                  {/* MONTHLY LIMIT */}
+
+                  <td>
+
+                    <strong className="mileage-limit-value">
+
+                      {formatNumber(
+                        item.monthlyLimit
+                      )}{" "}
+                      km
+
+                    </strong>
+
+                  </td>
+
+
+                  {/* MONTHLY DIFFERENCE */}
+
+                  <td>
+
+                    <span
+                      className={
+                        monthlyDifference > 0
+                          ? "mileage-difference mileage-difference-warning"
+                          : "mileage-difference mileage-difference-good"
+                      }
+                    >
+
+                      {monthlyDifference > 0
+                        ? "+"
+                        : ""}
+
+                      {formatNumber(
+                        monthlyDifference
+                      )}{" "}
+                      km
+
+                    </span>
+
+                  </td>
+
+
+                  {/* TRIP SUMMARY */}
+
+                  <td>
+
+                    <div className="mileage-trip-summary">
+
+                      <span>
+                        <MapPin size={13} />
+                        Local: {localTrips}
+                      </span>
+
+                      <span>
+                        <Route size={13} />
+                        Outstation: {outstationTrips}
+                      </span>
+
+                    </div>
+
+                  </td>
+
+
+                  {/* STATUS */}
+
+                  <td>
+
+                    <span
+                      className={
+                        status.className
+                      }
+                    >
+
+                      {status.icon}
+
+                      {status.label}
+
+                    </span>
+
+                  </td>
+
+                </tr>
+
+              );
+
+            })}
+
+          </tbody>
+
+        </table>
+
+
+      ) : (
+
+
+        /*
+        =====================================================
+        MONTHLY TABLE
+        =====================================================
+        */
+
+        <table className="mileage-table mileage-monthly-table">
+
+          <thead>
+
+            <tr>
+
+              <th>Vehicle</th>
+
+              <th>Driver</th>
+
+              <th>Monthly Actual</th>
+
+              <th>Monthly Expected</th>
+
+              <th>Monthly Limit</th>
+
+              <th>Difference</th>
+
+              <th>Local Trips</th>
+
+              <th>Outstation Trips</th>
+
+              <th>Status</th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody>
+
+            {monitoring.map((item) => {
+
+              const status = getStatus(
+                item.status
+              );
+
+              const monthlyActual =
+                Number(
+                  item.monthlyActual || 0
+                );
+
+              const monthlyExpected =
+                Number(
+                  item.monthlyExpected || 0
+                );
+
+              const monthlyLimit =
+                Number(
+                  item.monthlyLimit || 0
+                );
+
+              /*
+              Difference between actual
+              and expected mileage
+              */
+
+              const monthlyDifference =
+                Number(
+                  (
+                    monthlyActual -
+                    monthlyExpected
+                  ).toFixed(2)
+                );
+
+
+              const localTrips =
+                item.monthlyTrips?.local || 0;
+
+              const outstationTrips =
+                item.monthlyTrips?.outstation || 0;
+
+
+              return (
+
+                <tr key={item.vehicle.id}>
+
+                  {/* VEHICLE */}
+
+                  <td>
+
+                    <div className="mileage-vehicle-cell">
+
+                      <strong>
+                        {item.vehicle.registration_number}
+                      </strong>
+
+                      <span>
+                        {item.vehicle.model}
+                      </span>
+
+                    </div>
+
+                  </td>
+
+
+                  {/* DRIVER */}
+
+                  <td>
+                    {item.driver?.name || "—"}
+                  </td>
+
+
+                  {/* MONTHLY ACTUAL */}
+
+                  <td>
+
+                    <span className="mileage-km">
+
+                      {formatNumber(
+                        monthlyActual
+                      )}{" "}
+                      km
+
+                    </span>
+
+                  </td>
+
+
+                  {/* MONTHLY EXPECTED */}
+
+                  <td>
+
+                    {formatNumber(
+                      monthlyExpected
+                    )}{" "}
+                    km
+
+                  </td>
+
+
+                  {/* MONTHLY LIMIT */}
+
+                  <td>
+
+                    <strong className="mileage-limit-value">
+
+                      {formatNumber(
+                        monthlyLimit
+                      )}{" "}
+                      km
+
+                    </strong>
+
+                  </td>
+
+
+                  {/* DIFFERENCE */}
+
+                  <td>
+
+                    <span
+                      className={
+                        monthlyDifference > 0
+                          ? "mileage-difference mileage-difference-warning"
+                          : "mileage-difference mileage-difference-good"
+                      }
+                    >
+
+                      {monthlyDifference > 0
+                        ? "+"
+                        : ""}
+
+                      {formatNumber(
+                        monthlyDifference
+                      )}{" "}
+                      km
+
+                    </span>
+
+                  </td>
+
+
+                  {/* LOCAL TRIPS */}
+
+                  <td>
+
+                    <span className="mileage-trip-count">
+
+                      <MapPin size={14} />
+
+                      {localTrips}
+
+                    </span>
+
+                  </td>
+
+
+                  {/* OUTSTATION TRIPS */}
+
+                  <td>
+
+                    <span className="mileage-trip-count">
+
+                      <Route size={14} />
+
+                      {outstationTrips}
+
+                    </span>
+
+                  </td>
+
+
+                  {/* STATUS */}
+
+                  <td>
+
+                    <span
+                      className={
+                        status.className
+                      }
+                    >
+
+                      {status.icon}
+
+                      {status.label}
+
+                    </span>
+
+                  </td>
+
+                </tr>
+
+              );
+
+            })}
+
+          </tbody>
+
+        </table>
+
+      )}
+
+    </div>
+
+  )}
+
+</div>
+
+
+{/* ================================================
+    LEGEND
+================================================= */}
+
+<div className="mileage-legend">
+
+  <div className="mileage-legend-item">
+
+    <span className="legend-dot success"></span>
+
+    <span>
+      On Track
+    </span>
+
   </div>
 
 
-  {/* Today's KM */}
-  <div className="mileage-summary-card">
-    <div className="mileage-summary-icon">
-      <CalendarDays size={21} />
-    </div>
+  <div className="mileage-legend-item">
 
-    <div className="mileage-summary-content">
-      <span>Today's KM</span>
+    <span className="legend-dot warning"></span>
 
-      <strong>
-        {mileage
-          .filter(
-            (entry) =>
-              entry.entry_date ===
-              new Date().toISOString().split("T")[0]
-          )
-          .reduce(
-            (total, entry) =>
-              total + Number(entry.km_covered || 0),
-            0
-          )
-          .toLocaleString()}
-      </strong>
+    <span>
+      Warning — usage is above expected pace
+    </span>
 
-      <p>Distance covered today</p>
-    </div>
+  </div>
+
+
+  <div className="mileage-legend-item">
+
+    <span className="legend-dot danger"></span>
+
+    <span>
+      Exceeded — monthly limit crossed
+    </span>
+
   </div>
 
 </div>
-{/* ================= MILEAGE CHART ================= */}
-
-{!loading && !error && (
-  <div className="mileage-chart-card">
-
-    <div className="mileage-chart-header">
-
-      <div>
-        <h2>Mileage Overview</h2>
-
-        <p>
-          Total kilometers covered over the last 7 days
-        </p>
-      </div>
-
-    </div>
-
-    <div className="mileage-chart">
-
-      <ResponsiveContainer
-        width="100%"
-        height="100%"
-      >
-        <LineChart
-          data={chartData}
-          margin={{
-            top: 10,
-            right: 20,
-            left: 0,
-            bottom: 5,
-          }}
-        >
-
-          <CartesianGrid
-            stroke="#edf1f5"
-            vertical={false}
-          />
-
-          <XAxis
-            dataKey="label"
-            axisLine={false}
-            tickLine={false}
-            tick={{
-              fill: "#718096",
-              fontSize: 12,
-            }}
-          />
-
-          <YAxis
-            axisLine={false}
-            tickLine={false}
-            tick={{
-              fill: "#718096",
-              fontSize: 12,
-            }}
-            allowDecimals={false}
-          />
-
-          <Tooltip
-            contentStyle={{
-              border: "1px solid #e5eaf0",
-              borderRadius: "8px",
-              boxShadow:
-                "0 4px 12px rgba(23, 50, 77, 0.08)",
-            }}
-            formatter={(value) => [
-              `${Number(value).toLocaleString()} km`,
-              "Mileage",
-            ]}
-          />
-
-          <Line
-            type="monotone"
-            dataKey="km"
-            stroke="#0797a8"
-            strokeWidth={3}
-            dot={{
-              r: 4,
-              fill: "#0797a8",
-            }}
-            activeDot={{
-              r: 6,
-            }}
-          />
-
-        </LineChart>
-      </ResponsiveContainer>
-
-    </div>
-
-  </div>
-)}
-      {/* ================= TABLE ================= */}
-
-      <div className="mileage-table-card">
-
-        {loading ? (
-          <div className="mileage-loading">
-            Loading mileage...
-          </div>
-        ) : mileage.length === 0 ? (
-          <div className="mileage-empty">
-
-            <Gauge size={40} />
-
-            <h3>No mileage entries found</h3>
-
-            <p>
-              Mileage records submitted by drivers
-              will appear here.
-            </p>
-
-          </div>
-        ) : (
-          <div className="mileage-table-wrapper">
-
-            <table className="mileage-table">
-
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Vehicle</th>
-                  <th>Driver</th>
-                  <th>Starting</th>
-                  <th>Ending</th>
-                  <th>KM Covered</th>
-                  <th>Trip Type</th>
-                  <th>Monthly Status</th>
-                </tr>
-              </thead>
-
-              <tbody>
-
-                {mileage.map((entry) => (
-
-                  <tr key={entry.id}>
-
-                    {/* DATE */}
-
-                    <td>
-                      {new Date(
-                        `${entry.entry_date}T00:00:00`
-                      ).toLocaleDateString()}
-                    </td>
-
-                    {/* VEHICLE */}
-
-                    <td>
-                      <div className="mileage-vehicle-cell">
-
-                        <strong>
-                          {entry.vehicles
-                            ?.registration_number ||
-                            "—"}
-                        </strong>
-
-                        {entry.vehicles?.model && (
-                          <span>
-                            {entry.vehicles.model}
-                          </span>
-                        )}
-
-                      </div>
-                    </td>
-
-                    {/* DRIVER */}
-
-                    <td>
-                      {entry.drivers?.name || "—"}
-                    </td>
-
-                    {/* STARTING */}
-
-                    <td>
-                      {Number(
-                        entry.starting_mileage
-                      ).toLocaleString()}
-                    </td>
-
-                    {/* ENDING */}
-
-                    <td>
-                      {Number(
-                        entry.ending_mileage
-                      ).toLocaleString()}
-                    </td>
-
-                    {/* KM COVERED */}
-
-                    <td>
-                      <span className="mileage-km">
-                        {Number(
-                          entry.km_covered || 0
-                        ).toLocaleString()}{" "}
-                        km
-                      </span>
-                    </td>
-
-                    {/* TRIP TYPE */}
-
-                    <td>
-                      <span className="mileage-trip-type">
-                        {entry.trip_type}
-                      </span>
-                    </td>
-
-                    {/* REMARKS */}
-
-                    {/* MONTHLY STATUS */}
-
-<td>
-  {entry.isLatestEntry ? (
-    entry.monthlyStatus?.overLimit > 0 ? (
-      <span className="mileage-limit-warning">
-        <AlertTriangle size={14} />
-        <span>
-          {Number(
-            entry.monthlyStatus.overLimit
-          ).toLocaleString()}{" "}
-          KM over limit
-        </span>
-      </span>
-    ) : (
-      <span className="mileage-limit-remaining">
-        {Number(
-          entry.monthlyStatus?.remaining || 0
-        ).toLocaleString()}{" "}
-        KM remaining
-      </span>
-    )
-  ) : (
-    <span className="mileage-status-placeholder">
-       No limit
-    </span>
-  )}
-
-</td>
-
-                  </tr>
-
-                ))}
-
-              </tbody>
-
-            </table>
-
-          </div>
-        )}
-
-      </div>
-
-    </div>
-  );
+</div>
+  )
 }
 
-export default Mileage;
+
+  export default Mileage;
