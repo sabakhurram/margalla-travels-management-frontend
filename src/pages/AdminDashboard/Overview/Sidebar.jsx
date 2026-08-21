@@ -5,6 +5,7 @@ import {
   Gauge,
   Tags,
   ClipboardList,
+    FileText,
   LogOut,
   Menu,
   X,
@@ -42,6 +43,11 @@ function Sidebar({
   label: "Mileage",
   icon: Gauge,
   tab: "mileage",
+},
+{
+  label: "Reports",
+  icon: FileText,
+  tab: "reports",
 },
 {
   label: "Categories",
