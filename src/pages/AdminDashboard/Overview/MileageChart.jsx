@@ -11,41 +11,43 @@ import {
 
 import "./MileageChart.css";
 
-function MileageChart() {
-  // Temporary data.
-  // Later this will come from Supabase.
-  const mileageData = [
-    {
-      vehicle: "Fortuner",
-      used: 6300,
-      limit: 6000,
-      percentage: 105,
-    },
-    {
-      vehicle: "Corolla",
-      used: 4200,
-      limit: 5000,
-      percentage: 84,
-    },
-    {
-      vehicle: "Civic",
-      used: 2500,
-      limit: 4000,
-      percentage: 62,
-    },
-    {
-      vehicle: "Hiace",
-      used: 3100,
-      limit: 6000,
-      percentage: 52,
-    },
-    {
-      vehicle: "Land Cruiser",
-      used: 2500,
-      limit: 6000,
-      percentage: 42,
-    },
-  ];
+function MileageChart({
+  data = [],
+  loading = false,
+}) {
+  /*
+  ====================================================
+  PREPARE CHART DATA
+  ====================================================
+  */
+
+  const mileageData = data
+    .filter(
+      (item) =>
+        item.monthlyLimit > 0
+    )
+    .slice(0, 5)
+    .map((item) => ({
+      vehicle:
+        item.vehicle?.registration_number ||
+        item.vehicle?.model ||
+        "Vehicle",
+
+      used:
+        item.monthlyActual || 0,
+
+      limit:
+        item.monthlyLimit || 0,
+
+      percentage:
+        item.percentage || 0,
+    }));
+
+  /*
+  ====================================================
+  BAR COLOR
+  ====================================================
+  */
 
   const getBarColor = (percentage) => {
     if (percentage >= 100) {
@@ -59,99 +61,159 @@ function MileageChart() {
     return "#0797a8";
   };
 
+  /*
+  ====================================================
+  RENDER
+  ====================================================
+  */
+
   return (
     <section className="mileage-chart-card">
 
       <div className="mileage-chart-header">
+
         <div>
-          <h3>Mileage Utilization</h3>
+          <h3>
+            Mileage Utilization
+          </h3>
 
           <p>
-            Vehicles closest to their monthly mileage limit.
+            Vehicles closest to their monthly
+            mileage limit.
           </p>
         </div>
 
         <span className="mileage-chart-period">
           This Month
         </span>
+
       </div>
 
       <div className="mileage-chart-wrapper">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart
-            data={mileageData}
-            layout="vertical"
-            margin={{
-              top: 5,
-              right: 35,
-              left: 5,
-              bottom: 5,
-            }}
+
+        {loading ? (
+
+          <div className="mileage-chart-empty">
+            Loading mileage data...
+          </div>
+
+        ) : mileageData.length === 0 ? (
+
+          <div className="mileage-chart-empty">
+            No mileage data available.
+          </div>
+
+        ) : (
+
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
           >
-            <CartesianGrid
-              stroke="#edf1f5"
-              strokeDasharray="3 3"
-              horizontal={false}
-            />
-
-            <XAxis
-              type="number"
-              domain={[0, 120]}
-              axisLine={false}
-              tickLine={false}
-              tick={{
-                fill: "#8a96a5",
-                fontSize: 9,
+            <BarChart
+              data={mileageData}
+              layout="vertical"
+              margin={{
+                top: 5,
+                right: 35,
+                left: 5,
+                bottom: 5,
               }}
-              tickFormatter={(value) => `${value}%`}
-            />
-
-            <YAxis
-              type="category"
-              dataKey="vehicle"
-              axisLine={false}
-              tickLine={false}
-              width={80}
-              tick={{
-                fill: "#536274",
-                fontSize: 10,
-              }}
-            />
-
-            <Tooltip
-              cursor={{ fill: "#f5f8fa" }}
-              contentStyle={{
-                border: "1px solid #e8edf2",
-                borderRadius: "8px",
-                boxShadow: "0 4px 15px rgba(30, 55, 80, 0.08)",
-                fontSize: "10px",
-              }}
-              formatter={(value, name, props) => {
-                if (name === "percentage") {
-                  return [
-                    `${value}%`,
-                    "Mileage used",
-                  ];
-                }
-
-                return [value, name];
-              }}
-            />
-
-            <Bar
-              dataKey="percentage"
-              radius={[0, 5, 5, 0]}
-              barSize={17}
             >
-              {mileageData.map((entry) => (
-                <Cell
-                  key={entry.vehicle}
-                  fill={getBarColor(entry.percentage)}
-                />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+
+              <CartesianGrid
+                stroke="#edf1f5"
+                strokeDasharray="3 3"
+                horizontal={false}
+              />
+
+              <XAxis
+                type="number"
+                domain={[0, 120]}
+                axisLine={false}
+                tickLine={false}
+                tick={{
+                  fill: "#8a96a5",
+                  fontSize: 9,
+                }}
+                tickFormatter={(value) =>
+                  `${value}%`
+                }
+              />
+
+              <YAxis
+                type="category"
+                dataKey="vehicle"
+                axisLine={false}
+                tickLine={false}
+                width={80}
+                tick={{
+                  fill: "#536274",
+                  fontSize: 10,
+                }}
+              />
+
+              <Tooltip
+                cursor={{
+                  fill: "#f5f8fa",
+                }}
+                contentStyle={{
+                  border:
+                    "1px solid #e8edf2",
+                  borderRadius: "8px",
+                  boxShadow:
+                    "0 4px 15px rgba(30, 55, 80, 0.08)",
+                  fontSize: "10px",
+                }}
+                formatter={(
+                  value,
+                  name,
+                  props
+                ) => {
+                  if (
+                    name === "percentage"
+                  ) {
+                    return [
+                      `${value}%`,
+                      "Mileage used",
+                    ];
+                  }
+
+                  return [
+                    value,
+                    name,
+                  ];
+                }}
+              />
+
+              <Bar
+                dataKey="percentage"
+                radius={[
+                  0,
+                  5,
+                  5,
+                  0,
+                ]}
+                barSize={17}
+              >
+
+                {mileageData.map(
+                  (entry) => (
+                    <Cell
+                      key={entry.vehicle}
+                      fill={getBarColor(
+                        entry.percentage
+                      )}
+                    />
+                  )
+                )}
+
+              </Bar>
+
+            </BarChart>
+          </ResponsiveContainer>
+
+        )}
+
       </div>
 
       <div className="mileage-legend">

@@ -17,7 +17,8 @@ const pageTitles = {
   vehicles: "Vehicles",
   drivers: "Drivers",
   mileage: "Mileage",
-  audit: "Audit Logs",
+"audit-logs": "Audit Logs",
+reports: "Reports",
 };
 
 const currentTitle = pageTitles[activeTab] || "Dashboard";
@@ -36,10 +37,9 @@ const currentTitle = pageTitles[activeTab] || "Dashboard";
           <Menu size={21} />
         </button>
 
-        <div className="header-title">
-          <span>Margalla Travels</span>
-         <h1>{currentTitle}</h1>
-        </div>
+      <div className="header-title">
+  <h1>{currentTitle}</h1>
+</div>
 
       </div>
 
@@ -71,7 +71,7 @@ const currentTitle = pageTitles[activeTab] || "Dashboard";
 
           <div className="header-user-info">
             <strong>{adminName}</strong>
-            <span>Administrator</span>
+        
           </div>
 
           <ChevronDown size={15} />

@@ -22,7 +22,7 @@
 
   gap: 12px;
 
-  margin-bottom: 10px;
+  margin-bottom: 4px;
 }
 
 .vehicle-status-header h3 {
@@ -32,6 +32,8 @@
 
   font-size: 14px;
   font-weight: 650;
+
+  letter-spacing: 0.2px;
 }
 
 .vehicle-status-header p {
@@ -40,6 +42,8 @@
   color: #8a96a5;
 
   font-size: 10px;
+
+  letter-spacing: 0.1px;
 }
 
 .vehicle-status-period {
@@ -56,36 +60,44 @@
 }
 
 /* =========================
-   CONTENT
-========================= */
-
-.vehicle-status-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  gap: 18px;
-
-  min-height: 250px;
-}
-
-/* =========================
-   CHART
+   DONUT CHART
 ========================= */
 
 .vehicle-status-chart {
   position: relative;
 
-  width: 190px;
-  height: 190px;
+  width: 180px;
+  height: 180px;
 
-  flex-shrink: 0;
+  margin: 18px auto 12px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+.vehicle-status-chart
+.recharts-responsive-container {
+  position: absolute !important;
+
+  top: 0;
+  left: 0;
+
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* =========================
+   CENTER TEXT
+========================= */
 
 .vehicle-status-center {
   position: absolute;
 
-  inset: 0;
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
 
   display: flex;
   flex-direction: column;
@@ -93,7 +105,11 @@
   align-items: center;
   justify-content: center;
 
+  width: 90px;
+
   pointer-events: none;
+
+  text-align: center;
 }
 
 .vehicle-status-center strong {
@@ -101,14 +117,39 @@
 
   font-size: 23px;
   font-weight: 700;
+
+  line-height: 1;
+
+  letter-spacing: 0.3px;
 }
 
 .vehicle-status-center span {
-  margin-top: 2px;
+  margin-top: 5px;
 
   color: #8a96a5;
 
   font-size: 9px;
+  font-weight: 500;
+}
+
+/* =========================
+   EMPTY / LOADING
+========================= */
+
+.vehicle-status-empty {
+  position: absolute;
+
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #8a96a5;
+
+  font-size: 10px;
+
+  text-align: center;
 }
 
 /* =========================
@@ -117,23 +158,34 @@
 
 .vehicle-status-legend {
   display: flex;
-  flex-direction: column;
 
-  gap: 17px;
-
-  min-width: 95px;
-}
-
-.vehicle-status-item {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 
-  gap: 20px;
+  gap: 28px;
+
+  width: 100%;
+
+  margin-top: 4px;
 }
 
-.vehicle-status-name {
+/* Each status */
+
+.vehicle-status-legend-item {
   display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+
+  min-width: 0;
+}
+
+/* Dot + name */
+
+.vehicle-status-legend-left {
+  display: flex;
+
   align-items: center;
 
   gap: 7px;
@@ -141,83 +193,74 @@
   color: #687587;
 
   font-size: 10px;
+
+  white-space: nowrap;
 }
 
 .vehicle-status-dot {
   width: 8px;
   height: 8px;
 
-  border-radius: 50%;
-
   flex-shrink: 0;
+
+  border-radius: 50%;
 }
 
-.vehicle-status-item strong {
+/* Number */
+
+.vehicle-status-legend-item strong {
   color: #273348;
 
   font-size: 11px;
   font-weight: 650;
 }
 
+/* Percentage */
+
+.vehicle-status-percentage {
+  color: #8a96a5;
+
+  font-size: 9px;
+}
+
 /* =========================
    RESPONSIVE
 ========================= */
 
-@media (max-width: 1100px) {
-  .vehicle-status-content {
-    flex-direction: column;
-
-    gap: 5px;
-  }
+@media (max-width: 700px) {
 
   .vehicle-status-chart {
-    width: 180px;
-    height: 180px;
+    width: 170px;
+    height: 170px;
   }
 
   .vehicle-status-legend {
-    width: 100%;
+    gap: 18px;
 
-    flex-direction: row;
-
-    justify-content: center;
-
-    gap: 20px;
+    flex-wrap: wrap;
   }
 
-  .vehicle-status-item {
-    gap: 6px;
-  }
-}
-
-@media (max-width: 900px) {
-  .vehicle-status-content {
-    flex-direction: row;
-  }
-
-  .vehicle-status-legend {
-    flex-direction: column;
-
-    width: auto;
-  }
 }
 
 @media (max-width: 500px) {
+
   .vehicle-status-card {
     padding: 16px;
   }
 
-  .vehicle-status-content {
-    flex-direction: column;
+  .vehicle-status-chart {
+    width: 165px;
+    height: 165px;
+
+    margin-top: 15px;
   }
 
   .vehicle-status-legend {
-    flex-direction: row;
-
-    width: 100%;
-
-    justify-content: space-around;
-
-    gap: 8px;
+    gap: 12px;
   }
+
+  .vehicle-status-legend-item {
+    gap: 5px;
+  }
+
 }

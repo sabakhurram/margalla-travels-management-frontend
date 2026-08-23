@@ -1,5 +1,5 @@
-import { useState } from "react";
-
+import { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
 import Sidebar from "./Overview/Sidebar";
 import AdminHeader from "./Overview/AdminHeader";
 import AlertsPanel from "./Overview/AlertsPanel";
@@ -26,6 +26,56 @@ import "./AdminDashboard.css";
 function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const { session } = useAuth();
+
+const [dashboardData, setDashboardData] = useState(null);
+const [dashboardLoading, setDashboardLoading] = useState(true);
+const [dashboardError, setDashboardError] = useState("");
+useEffect(() => {
+  const fetchDashboardOverview = async () => {
+    if (!session?.access_token) return;
+
+    try {
+      setDashboardLoading(true);
+      setDashboardError("");
+
+      const response = await fetch(
+        "http://localhost:5000/api/dashboard/overview",
+        {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            "Failed to load dashboard"
+        );
+      }
+
+      setDashboardData(data);
+
+    } catch (error) {
+      console.error(
+        "Dashboard overview error:",
+        error
+      );
+
+      setDashboardError(
+        error.message ||
+          "Failed to load dashboard"
+      );
+    } finally {
+      setDashboardLoading(false);
+    }
+  };
+
+  fetchDashboardOverview();
+}, [session]);
 
   return (
     <div className="admin-layout">
@@ -48,46 +98,64 @@ function AdminDashboard() {
 
   {activeTab === "overview" && (
     <>
-       <div className="dashboard-intro">
-    <div>
-      <h2>Overview</h2>
+ <div className="dashboard-intro">
+  <div>
+    <h1>Overview</h1>
 
-      <p>
-        Here's what's happening with your fleet today.
-      </p>
-    </div>
+    <p>
+      Here's what's happening with your fleet today.
+    </p>
   </div>
-
+</div>
+{dashboardError && (
+  <div className="dashboard-error">
+    {dashboardError}
+  </div>
+)}
   <div className="kpi-grid">
 <KPICard
   title="Total Vehicles"
-  value="32"
-  subtitle="Active fleet"
-  trend="+6.2%"
+  value={
+    dashboardLoading
+      ? "..."
+      : dashboardData?.kpis?.totalVehicles ?? 0
+  }
+  subtitle="Registered vehicles"
   icon={CarFront}
   variant="default"
 />
-   <KPICard
+ <KPICard
   title="Total Drivers"
-  value="28"
+  value={
+    dashboardLoading
+      ? "..."
+      : dashboardData?.kpis?.totalDrivers ?? 0
+  }
   subtitle="Registered drivers"
-  trend="+7.6%"
   icon={Users}
   variant="info"
 />
 
-    <KPICard
+ <KPICard
   title="Monthly KM"
-  value="12,450"
-  subtitle="Higher than last month"
-  trend="+8.4%"
+  value={
+    dashboardLoading
+      ? "..."
+      : Number(
+          dashboardData?.kpis?.monthlyKm ?? 0
+        ).toLocaleString()
+  }
+  subtitle="Mileage recorded this month"
   icon={Gauge}
   variant="success"
 />
-
-   <KPICard
+<KPICard
   title="Alerts"
-  value="5"
+  value={
+    dashboardLoading
+      ? "..."
+      : dashboardData?.kpis?.alerts ?? 0
+  }
   subtitle="Requires your attention"
   icon={Bell}
   variant="warning"
@@ -95,8 +163,20 @@ function AdminDashboard() {
 </div>
 
 <div className="dashboard-charts">
-  <MileageChart />
-   <VehicleStatusChart />
+  <MileageChart
+  data={dashboardData?.mileageUtilization || []}
+  loading={dashboardLoading}
+/>
+  <VehicleStatusChart
+  data={
+    dashboardData?.vehicleStatus || {
+      active: 0,
+      inactive: 0,
+      maintenance: 0,
+    }
+  }
+  loading={dashboardLoading}
+/>
 </div>
 <div className="dashboard-bottom-grid">
 
