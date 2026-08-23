@@ -426,7 +426,10 @@ const handleMileageSubmit = async (e) => {
   onChange={(e) =>
     setStartingMileage(e.target.value)
   }
-  readOnly={startingMileage !== ""}
+  readOnly={
+    dashboardData?.startingOdometer !== null &&
+    dashboardData?.startingOdometer !== undefined
+  }
 />
           </div>
 

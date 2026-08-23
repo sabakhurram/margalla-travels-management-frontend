@@ -1,62 +1,57 @@
 import {
   Gauge,
-  Wrench,
-  UserPlus,
-  CarFront,
-  AlertTriangle,
   ArrowUpRight,
 } from "lucide-react";
 
 import "./RecentActivity.css";
 
-function RecentActivity() {
-  const activities = [
-    {
-      id: 1,
-      time: "42 mins ago",
-      title: "Mileage Entry Submitted",
-      description: "Ali Khan submitted 135 km for Toyota Corolla",
-      type: "mileage",
-      icon: Gauge,
-      label: "Mileage",
-    },
-    {
-      id: 2,
-      time: "1 hour ago",
-      title: "Vehicle Maintenance Scheduled",
-      description: "Toyota Fortuner is scheduled for maintenance",
-      type: "maintenance",
-      icon: Wrench,
-      label: "Maintenance",
-    },
-    {
-      id: 3,
-      time: "2 hours ago",
-      title: "New Driver Added",
-      description: "Usman Tariq has been added as a driver",
-      type: "driver",
-      icon: UserPlus,
-      label: "Drivers",
-    },
-    {
-      id: 4,
-      time: "3 hours ago",
-      title: "Mileage Limit Exceeded",
-      description: "Toyota Fortuner exceeded its monthly limit",
-      type: "alert",
-      icon: AlertTriangle,
-      label: "Alert",
-    },
-    {
-      id: 5,
-      time: "5 hours ago",
-      title: "Vehicle Added",
-      description: "Honda Civic has been added to the fleet",
-      type: "vehicle",
-      icon: CarFront,
-      label: "Vehicles",
-    },
-  ];
+function formatActivityTime(dateString) {
+  if (!dateString) return "";
+
+  const date = new Date(dateString);
+  const now = new Date();
+
+  const diffMs = now - date;
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffMinutes < 1) {
+    return "Just now";
+  }
+
+  if (diffMinutes < 60) {
+    return `${diffMinutes} ${
+      diffMinutes === 1 ? "min" : "mins"
+    } ago`;
+  }
+
+  if (diffHours < 24) {
+    return `${diffHours} ${
+      diffHours === 1 ? "hour" : "hours"
+    } ago`;
+  }
+
+  if (diffDays < 7) {
+    return `${diffDays} ${
+      diffDays === 1 ? "day" : "days"
+    } ago`;
+  }
+
+  return date.toLocaleDateString();
+}
+
+function RecentActivity({
+  data = [],
+  loading = false,
+  onViewAll,
+}) {
+  const activities = data.map((activity) => ({
+    ...activity,
+    time: formatActivityTime(activity.createdAt),
+    icon: Gauge,
+    label: "Mileage",
+  }));
 
   return (
     <section className="recent-activity-card">
@@ -79,73 +74,86 @@ function RecentActivity() {
 
         </div>
 
-        <button className="activity-view-all">
-          View All
-          <ArrowUpRight size={14} />
-        </button>
+       <button
+  className="activity-view-all"
+  onClick={onViewAll}
+>
+  View All
+  <ArrowUpRight size={14} />
+</button>
 
       </div>
-
 
       <div className="activity-list">
 
-        {activities.map((activity) => {
+        {loading ? (
+          <div className="activity-empty">
+            Loading recent activity...
+          </div>
+        ) : activities.length === 0 ? (
+          <div className="activity-empty">
+            No recent activity found.
+          </div>
+        ) : (
+          activities.map((activity) => {
 
-          const Icon = activity.icon;
+            const Icon = activity.icon;
 
-          return (
-            <div
-              className="activity-item"
-              key={activity.id}
-            >
-
-              <div className="activity-time">
-                {activity.time}
-              </div>
-
-
+            return (
               <div
-                className={`activity-icon activity-${activity.type}`}
+                className="activity-item"
+                key={activity.id}
               >
-                <Icon size={14} />
-              </div>
 
+                <div className="activity-time">
+                  {activity.time}
+                </div>
 
-              <div className="activity-line" />
+                <div
+                  className={`activity-icon activity-${activity.type}`}
+                >
+                  <Icon size={14} />
+                </div>
 
+                <div className="activity-line" />
 
-              <div className="activity-content">
+                <div className="activity-content">
 
-                <div className="activity-title-row">
+                  <div className="activity-title-row">
 
-                  <h4>
-                    {activity.title}
-                  </h4>
+                    <h4>
+                      {activity.title}
+                    </h4>
 
-                  <span
-                    className={`activity-tag tag-${activity.type}`}
-                  >
-                    {activity.label}
-                  </span>
+                    <span
+                      className={`activity-tag tag-${activity.type}`}
+                    >
+                      {activity.label}
+                    </span>
+
+                  </div>
+
+                  <p>
+                    {activity.description}
+                  </p>
 
                 </div>
 
-                <p>
-                  {activity.description}
-                </p>
-
               </div>
-
-            </div>
-          );
-
-        })}
+            );
+          })
+        )}
 
       </div>
 
-
       <div className="activity-footer">
-        Showing latest 5 activities
+        {loading
+          ? "Loading activities..."
+          : `Showing latest ${activities.length} ${
+              activities.length === 1
+                ? "activity"
+                : "activities"
+            }`}
       </div>
 
     </section>

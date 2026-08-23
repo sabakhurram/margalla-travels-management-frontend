@@ -11,8 +11,7 @@ import {
   Route,
 } from "lucide-react";
 import "./Mileage.css";
-
-function Mileage() {
+function Mileage({ filteredVehicleIds = null }) {
   const { session } = useAuth();
 
   const [monitoring, setMonitoring] = useState([]);
@@ -164,7 +163,11 @@ function Mileage() {
 
     return "Mileage for Selected Date";
   };
-
+const displayedMonitoring = filteredVehicleIds
+  ? monitoring.filter((item) =>
+      filteredVehicleIds.includes(item.vehicle.id)
+    )
+  : monitoring;
   return (
     <div className="mileage-page">
 
@@ -320,7 +323,7 @@ function Mileage() {
 </div>
 
     <div className="mileage-monitor-count">
-      {monitoring.length} vehicles
+     {displayedMonitoring.length} vehicles
     </div>
 
   </div>
@@ -332,7 +335,7 @@ function Mileage() {
       Loading mileage monitoring...
     </div>
 
-  ) : monitoring.length === 0 ? (
+  ) : displayedMonitoring.length === 0 ? (
 
     <div className="mileage-empty">
 
@@ -395,7 +398,7 @@ function Mileage() {
 
           <tbody>
 
-            {monitoring.map((item) => {
+            {displayedMonitoring.map((item) => {
 
               const status = getStatus(
                 item.status
@@ -696,7 +699,7 @@ function Mileage() {
 
           <tbody>
 
-            {monitoring.map((item) => {
+        {displayedMonitoring.map((item) => {
 
               const status = getStatus(
                 item.status

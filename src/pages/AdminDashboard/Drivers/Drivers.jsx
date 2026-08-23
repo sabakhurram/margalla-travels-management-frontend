@@ -4,7 +4,7 @@ import { Plus, Pencil, Trash2, UserRound } from "lucide-react";
 
 import "./Drivers.css";
 
-function Drivers() {
+function Drivers({ filteredDriverIds = null }) {
   const { session } = useAuth();
 
   const [drivers, setDrivers] = useState([]);
@@ -186,7 +186,11 @@ const openEditForm = (driver) => {
       setError(error.message);
     }
   };
-
+const displayedDrivers = filteredDriverIds
+  ? drivers.filter((driver) =>
+      filteredDriverIds.includes(driver.id)
+    )
+  : drivers;
   return (
     <div className="drivers-page">
 
@@ -326,7 +330,7 @@ const openEditForm = (driver) => {
           <div className="drivers-loading">
             Loading drivers...
           </div>
-        ) : drivers.length === 0 ? (
+       ) : displayedDrivers.length === 0 ? (
           <div className="drivers-empty">
             <UserRound size={40} />
 
@@ -353,7 +357,7 @@ const openEditForm = (driver) => {
               </thead>
 
               <tbody>
-                {drivers.map((driver) => (
+                {displayedDrivers.map((driver) => (
                   <tr key={driver.id}>
 
                     <td>

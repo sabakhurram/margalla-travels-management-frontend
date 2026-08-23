@@ -2,35 +2,56 @@ import {
   AlertTriangle,
   Users,
   CarFront,
+  Gauge,
   ArrowUpRight,
 } from "lucide-react";
 
 import "./AlertsPanel.css";
 
-function AlertsPanel() {
-  const alerts = [
-    {
-      id: 1,
-      type: "critical",
-      icon: Users,
-      count: "3",
-      title: "Drivers missing mileage",
-      description: "Today's mileage has not been submitted.",
-      action: "Review drivers",
-    },
-    {
-      id: 2,
-      type: "warning",
-      icon: CarFront,
-      count: "2",
-      title: "Vehicles under maintenance",
-      description: "These vehicles are currently unavailable.",
-      action: "View vehicles",
-    },
-  ];
+function AlertsPanel({
+  data = [],
+  loading = false,
+  onViewDrivers,
+  onViewMileage,
+}) {
+  const handleAlertAction = (alert) => {
+    switch (alert.id) {
+      case "missing-mileage":
+        onViewDrivers?.(alert.driverIds || []);
+        break;
 
-  const totalAlerts = alerts.reduce(
-    (total, alert) => total + Number(alert.count),
+      case "daily-limit":
+        onViewMileage?.(alert.vehicleIds || []);
+        break;
+
+      case "monthly-limit":
+        onViewMileage?.(alert.vehicleIds || []);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const getAlertIcon = (type) => {
+    switch (type) {
+      case "missing-mileage":
+        return Users;
+
+      case "daily-limit":
+        return Gauge;
+
+      case "monthly-limit":
+        return CarFront;
+
+      default:
+        return AlertTriangle;
+    }
+  };
+
+  const totalAlerts = data.reduce(
+    (total, alert) =>
+      total + Number(alert.count || 0),
     0
   );
 
@@ -51,7 +72,7 @@ function AlertsPanel() {
               <h3>Alerts & Actions</h3>
 
               <span className="alerts-count">
-                {totalAlerts}
+                {loading ? "..." : totalAlerts}
               </span>
             </div>
 
@@ -62,59 +83,79 @@ function AlertsPanel() {
 
         </div>
 
-        <button className="alerts-view-all">
+        <button
+          type="button"
+          className="alerts-view-all"
+        >
           View all
           <ArrowUpRight size={14} />
         </button>
 
       </div>
 
-
       {/* Alerts */}
       <div className="alerts-list">
 
-        {alerts.map((alert) => {
-          const Icon = alert.icon;
+        {loading ? (
+          <div className="alerts-empty">
+            Loading alerts...
+          </div>
+        ) : data.length === 0 ? (
+          <div className="alerts-empty">
+            No alerts require your attention.
+          </div>
+        ) : (
+          data.map((alert) => {
 
-          return (
-            <div
-              className={`alert-card alert-${alert.type}`}
-              key={alert.id}
-            >
+            const Icon = getAlertIcon(
+              alert.type
+            );
 
-              <div className="alert-card-icon">
-                <Icon size={17} />
-              </div>
+            return (
+              <div
+                className={`alert-card alert-${alert.type}`}
+                key={alert.id}
+              >
 
+                <div className="alert-card-icon">
+                  <Icon size={17} />
+                </div>
 
-              <div className="alert-card-content">
+                <div className="alert-card-content">
 
-                <div className="alert-card-title-row">
+                  <div className="alert-card-title-row">
 
-                  <h4>
-                    {alert.title}
-                  </h4>
+                    <h4>
+                      {alert.title}
+                    </h4>
 
-                  <span className="alert-number">
-                    {alert.count}
-                  </span>
+                    <span className="alert-number">
+                      {alert.count}
+                    </span>
+
+                  </div>
+
+                  <p>
+                    {alert.description}
+                  </p>
+
+                  <button
+                    type="button"
+                    className="alert-review"
+                    onClick={() =>
+                      handleAlertAction(alert)
+                    }
+                  >
+                    {alert.action}
+                    <ArrowUpRight size={12} />
+                  </button>
 
                 </div>
 
-                <p>
-                  {alert.description}
-                </p>
-
-                <button className="alert-review">
-                  {alert.action}
-                  <ArrowUpRight size={12} />
-                </button>
-
               </div>
-
-            </div>
-          );
-        })}
+            );
+          })
+        )}
 
       </div>
 

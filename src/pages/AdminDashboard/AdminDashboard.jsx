@@ -31,6 +31,10 @@ function AdminDashboard() {
 const [dashboardData, setDashboardData] = useState(null);
 const [dashboardLoading, setDashboardLoading] = useState(true);
 const [dashboardError, setDashboardError] = useState("");
+const [filteredDriverIds, setFilteredDriverIds] =
+  useState(null);
+  const [filteredMileageVehicleIds, setFilteredMileageVehicleIds] =
+  useState(null);
 useEffect(() => {
   const fetchDashboardOverview = async () => {
     if (!session?.access_token) return;
@@ -79,12 +83,15 @@ useEffect(() => {
 
   return (
     <div className="admin-layout">
-
-     <Sidebar
+<Sidebar
   isOpen={sidebarOpen}
   setIsOpen={setSidebarOpen}
   activeTab={activeTab}
-  setActiveTab={setActiveTab}
+  setActiveTab={(tab) => {
+    setFilteredDriverIds(null);
+    setFilteredMileageVehicleIds(null);
+    setActiveTab(tab);
+  }}
 />
 
       <main className="admin-main">
@@ -180,9 +187,30 @@ useEffect(() => {
 </div>
 <div className="dashboard-bottom-grid">
 
-  <RecentActivity />
+ <RecentActivity
+  data={dashboardData?.recentActivity || []}
+  loading={dashboardLoading}
+onViewAll={() => setActiveTab("audit-logs")}
+/>
 
-  <AlertsPanel />
+<AlertsPanel
+  data={dashboardData?.alerts || []}
+  loading={dashboardLoading}
+
+  onViewDrivers={(driverIds) => {
+    setFilteredDriverIds(driverIds);
+    setActiveTab("drivers");
+  }}
+
+  onViewMileage={(vehicleIds) => {
+    setFilteredMileageVehicleIds(vehicleIds);
+    setActiveTab("mileage");
+  }}
+
+  onViewVehicles={(vehicleIds) => {
+    setActiveTab("vehicles");
+  }}
+/>
 
 </div>
     </>
@@ -195,10 +223,14 @@ useEffect(() => {
     <Vehicles />
   )}
    {activeTab === "drivers" && (
-    <Drivers />
-  )}
-  {activeTab === "mileage" && (
-  <Mileage />
+  <Drivers
+    filteredDriverIds={filteredDriverIds}
+  />
+)}
+ {activeTab === "mileage" && (
+  <Mileage
+    filteredVehicleIds={filteredMileageVehicleIds}
+  />
 )}
 {activeTab === "reports" && <Reports />}
 {activeTab === "audit-logs" &&(<AuditLogs />) }
