@@ -264,9 +264,11 @@
     gap: 7px;
   }
 
-  .header-search {
-    display: none;
-  }
+.header-search {
+  display: flex;
+  width: 150px;
+  height: 34px;
+}
 
   .header-icon-button {
     width: 34px;
@@ -276,6 +278,448 @@
   .header-avatar {
     width: 34px;
     height: 34px;
+  }
+
+}
+/* =========================
+   NOTIFICATION DROPDOWN
+========================= */
+
+.notification-wrapper {
+  position: relative;
+}
+
+.notification-dropdown {
+  position: absolute;
+
+  top: calc(100% + 10px);
+  right: 0;
+
+  width: 340px;
+  max-width: calc(100vw - 28px);
+
+  background: #ffffff;
+
+  border: 1px solid #e5ebf0;
+  border-radius: 12px;
+
+  box-shadow: 0 12px 35px rgba(23, 50, 77, 0.12);
+
+  overflow: hidden;
+
+  z-index: 1000;
+}
+
+/* =========================
+   NOTIFICATION HEADER
+========================= */
+
+.notification-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 15px 16px;
+
+  border-bottom: 1px solid #edf1f4;
+
+  background: #ffffff;
+}
+
+.notification-header > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.notification-header h3 {
+  margin: 0;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  color: #17324d;
+}
+
+.notification-header span {
+  font-size: 10px;
+
+  color: #8b96a5;
+}
+
+.notification-close {
+  width: 30px;
+  height: 30px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 7px;
+
+  background: transparent;
+
+  color: #8b96a5;
+
+  cursor: pointer;
+}
+
+.notification-close:hover {
+  background: #f1f8f9;
+  color: #087f91;
+}
+
+/* =========================
+   NOTIFICATION LIST
+========================= */
+
+.notification-list {
+  max-height: 360px;
+
+  overflow-y: auto;
+}
+
+/* =========================
+   NOTIFICATION ITEM
+========================= */
+
+.notification-item {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 12px;
+
+  padding: 14px 16px;
+
+  border: none;
+  border-bottom: 1px solid #f0f3f5;
+
+  background: #ffffff;
+
+  text-align: left;
+
+  cursor: pointer;
+
+  transition:
+    background 0.15s ease,
+    transform 0.15s ease;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background: #f7fbfc;
+}
+
+/* =========================
+   NOTIFICATION ICON
+========================= */
+
+.notification-icon {
+  width: 34px;
+  height: 34px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+
+  background: #fff4e8;
+
+  color: #d9822b;
+}
+
+/* =========================
+   NOTIFICATION CONTENT
+========================= */
+
+.notification-content {
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+.notification-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+}
+
+.notification-content strong {
+  font-size: 12px;
+  font-weight: 700;
+
+  color: #273348;
+
+  line-height: 1.35;
+}
+
+.notification-content > span {
+  font-size: 10px;
+  line-height: 1.5;
+
+  color: #7f8b99;
+}
+
+/* =========================
+   ALERT COUNT
+========================= */
+
+.notification-count {
+  min-width: 22px;
+  height: 22px;
+
+  padding: 0 6px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e7f6f8;
+
+  color: #087f91 !important;
+
+  font-size: 10px !important;
+  font-weight: 700;
+
+  flex-shrink: 0;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.notification-empty {
+  min-height: 150px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  padding: 25px;
+
+  color: #a0aab6;
+}
+
+.notification-empty svg {
+  color: #087f91;
+}
+
+.notification-empty p {
+  margin: 0;
+
+  font-size: 11px;
+
+  color: #8b96a5;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 500px) {
+
+  .notification-dropdown {
+    position: fixed;
+
+    top: 68px;
+    right: 14px;
+    left: 14px;
+
+    width: auto;
+    max-width: none;
+  }
+
+  .notification-list {
+    max-height: 320px;
+  }
+
+}
+
+/* =========================
+   PROFILE DROPDOWN
+========================= */
+
+.header-profile-wrapper {
+  position: relative;
+}
+
+.header-user {
+  border: none;
+  background: transparent;
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 4px;
+
+  color: #687587;
+
+  cursor: pointer;
+}
+
+.header-user:hover {
+  color: #087f91;
+}
+
+.profile-chevron-open {
+  transform: rotate(180deg);
+}
+
+.profile-dropdown {
+  position: absolute;
+
+  top: calc(100% + 10px);
+  right: 0;
+
+  width: 205px;
+
+  padding: 8px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5ebf0;
+  border-radius: 10px;
+
+  box-shadow:
+    0 8px 25px rgba(30, 55, 80, 0.10);
+
+  z-index: 1000;
+}
+
+/* Dropdown header */
+
+.profile-dropdown-header {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 9px;
+}
+
+.profile-dropdown-avatar {
+  width: 34px;
+  height: 34px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #e7f6f8;
+
+  color: #087f91;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.profile-dropdown-header > div:last-child {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+
+  min-width: 0;
+}
+
+.profile-dropdown-header strong {
+  color: #273348;
+
+  font-size: 11px;
+
+  font-weight: 650;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-dropdown-header span {
+  color: #8b96a5;
+
+  font-size: 9px;
+}
+
+/* Divider */
+
+.profile-dropdown-divider {
+  height: 1px;
+
+  margin: 4px 0;
+
+  background: #edf1f4;
+}
+
+/* Menu item */
+
+.profile-dropdown-item {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  padding: 9px;
+
+  border: none;
+  border-radius: 7px;
+
+  background: transparent;
+
+  color: #536274;
+
+  font-family: inherit;
+
+  font-size: 10px;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.profile-dropdown-item svg {
+  color: #087f91;
+}
+
+.profile-dropdown-item:hover {
+  background: #f1fafb;
+
+  color: #087f91;
+}
+@media (max-width: 500px) {
+
+  .profile-dropdown {
+    right: -4px;
+    width: 190px;
   }
 
 }

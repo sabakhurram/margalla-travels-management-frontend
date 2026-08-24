@@ -61,10 +61,6 @@ useEffect(() => {
             "Failed to load dashboard"
         );
       }
-console.log(
-  "FIRST MILEAGE VEHICLE:",
-  data.mileageUtilization?.[0]?.vehicle
-);
 
       setDashboardData(data);
 
@@ -167,13 +163,27 @@ const filteredAlerts = (
 
       <main className="admin-main">
 
-     <AdminHeader
+<AdminHeader
   setSidebarOpen={setSidebarOpen}
   activeTab={activeTab}
   searchQuery={searchQuery}
   setSearchQuery={setSearchQuery}
-/>
+  alerts={dashboardData?.alerts || []}
+  onViewAlerts={(alert) => {
+    setSearchQuery("");
 
+    if (alert.type === "missing-mileage") {
+      setActiveTab("drivers");
+    }
+
+    if (
+      alert.type === "daily-exceeded" ||
+      alert.type === "monthly-exceeded"
+    ) {
+      setActiveTab("mileage");
+    }
+  }}
+/>
        <div className="admin-content">
 
   {activeTab === "overview" && (

@@ -40,7 +40,7 @@
 
   border-radius: 16px;
 
-  background: #3478ed;
+  background: #0792a8;
   color: #ffffff;
 
   box-shadow: 0 8px 18px rgba(52, 120, 237, 0.22);
@@ -133,7 +133,7 @@
   border: none;
   border-radius: 16px;
 
-  background: #2563eb;
+  background: #0792a8;
   color: #ffffff;
 
   font-size: 16px;
@@ -146,7 +146,7 @@
 }
 
 .add-driver-btn:hover {
-  background: #1d4ed8;
+  background: #0792a8;
   transform: translateY(-1px);
 }
 /* =========================================================
@@ -169,7 +169,7 @@
   border: none;
   border-radius: 13px;
 
-  background: #2459d8;
+  background: #0792a8;
 
   color: #ffffff;
 
@@ -189,7 +189,7 @@
 }
 
 .drivers-add-btn:hover {
-  background: #1e4fc5;
+  background: #0ea5bc;
 
   transform: translateY(-1px);
 
@@ -328,7 +328,7 @@
 
 .drivers-form-group input:focus,
 .drivers-form-group select:focus {
-  border-color: #3478ed;
+  border-color: #0792a8;
 
   box-shadow: 0 0 0 3px rgba(52, 120, 237, 0.09);
 }
@@ -390,17 +390,17 @@
 }
 
 .drivers-save-btn {
-  border: 1px solid #2459d8;
+  border: 1px solid #0792a8;
 
-  background: #2459d8;
+  background: #0792a8;
 
   color: #ffffff;
 }
 
 .drivers-save-btn:hover {
-  background: #1e4fc5;
+  background:#0ea5bc;
 
-  border-color: #1e4fc5;
+  border-color: #0ea5bc;
 }
 
 

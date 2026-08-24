@@ -89,15 +89,8 @@ const generateReport = async () => {
         data.message || "Failed to generate report"
       );
     }
-console.log("REPORT REQUEST:", {
-  year,
-  month,
-});
-console.log(
-  "MILEAGE UTILIZATION:",
-  dashboardData?.mileageUtilization
-);
-console.log("REPORT RESPONSE:", data);
+
+
     setReport(data);
 
   } catch (error) {

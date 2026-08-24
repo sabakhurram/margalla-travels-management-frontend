@@ -9,6 +9,9 @@
   border-radius: 12px;
 
   box-shadow: 0 2px 8px rgba(30, 55, 80, 0.03);
+
+  display: flex;
+  flex-direction: column;
 }
 
 /* =========================
@@ -23,6 +26,12 @@
   gap: 12px;
 
   margin-bottom: 4px;
+}
+.vehicle-status-header > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .vehicle-status-header h3 {
@@ -69,11 +78,13 @@
   width: 180px;
   height: 180px;
 
-  margin: 18px auto 12px;
+  margin: 18px auto 0;
 
   display: flex;
   align-items: center;
   justify-content: center;
+
+  flex-shrink: 0;
 }
 
 .vehicle-status-chart
@@ -166,9 +177,9 @@
 
   width: 100%;
 
-  margin-top: 4px;
+  margin-top: auto;
+  padding-top: 20px;
 }
-
 /* Each status */
 
 .vehicle-status-legend-item {

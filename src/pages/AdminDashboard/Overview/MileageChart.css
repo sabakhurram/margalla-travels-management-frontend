@@ -19,29 +19,33 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  margin-bottom: 20px;
+}
 
-  gap: 15px;
-
-  margin-bottom: 16px;
+.mileage-chart-header > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
 }
 
 .mileage-chart-header h3 {
   margin: 0;
+  padding: 0;
 
-  color: #172033;
-
-  font-size: 14px;
-  font-weight: 650;
+  font-size: 16px;
+  font-weight: 700;
+  color: #17324d;
 }
 
 .mileage-chart-header p {
-  margin: 5px 0 0;
+  margin: 4px 0 0;
+  padding: 0;
 
-  color: #8a96a5;
-
-  font-size: 10px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #8b96a5;
 }
-
 /* =========================
    PERIOD
 ========================= */
