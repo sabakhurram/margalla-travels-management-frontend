@@ -46,15 +46,16 @@ function Sidebar({
       icon: Gauge,
       tab: "mileage",
     },
-    {
-      label: "Reports",
-      icon: FileText,
-      tab: "reports",
-    },
+ 
     {
       label: "Categories",
       icon: Tags,
       tab: "categories",
+    },
+       {
+      label: "Reports",
+      icon: FileText,
+      tab: "reports",
     },
     {
       label: "Audit Logs",

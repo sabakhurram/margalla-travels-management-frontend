@@ -11,7 +11,10 @@ import {
   Route,
 } from "lucide-react";
 import "./Mileage.css";
-function Mileage({ filteredVehicleIds = null }) {
+function Mileage({
+  filteredVehicleIds = null,
+  searchQuery = "",
+}) {
   const { session } = useAuth();
 
   const [monitoring, setMonitoring] = useState([]);
@@ -163,11 +166,32 @@ function Mileage({ filteredVehicleIds = null }) {
 
     return "Mileage for Selected Date";
   };
-const displayedMonitoring = filteredVehicleIds
-  ? monitoring.filter((item) =>
-      filteredVehicleIds.includes(item.vehicle.id)
-    )
-  : monitoring;
+const normalizedSearch = searchQuery
+  .trim()
+  .toLowerCase();
+
+const displayedMonitoring = monitoring.filter((item) => {
+  // Filter coming from the Alerts panel
+  const matchesVehicleFilter =
+    !filteredVehicleIds ||
+    filteredVehicleIds.includes(item.vehicle?.id);
+
+  // Filter coming from the header search
+  const matchesSearch =
+    !normalizedSearch ||
+    [
+      item.vehicle?.registration_number,
+      item.vehicle?.model,
+      item.driver?.name,
+      item.status,
+    ].some((field) =>
+      String(field || "")
+        .toLowerCase()
+        .includes(normalizedSearch)
+    );
+
+  return matchesVehicleFilter && matchesSearch;
+});
   return (
     <div className="mileage-page">
 
@@ -341,15 +365,17 @@ const displayedMonitoring = filteredVehicleIds
 
       <Gauge size={40} />
 
-      <h3>
-        No mileage data found
-      </h3>
+   <h3>
+  {searchQuery.trim()
+    ? "No matching mileage data"
+    : "No mileage data found"}
+</h3>
 
-      <p>
-        No vehicles are available for
-        mileage monitoring.
-      </p>
-
+<p>
+  {searchQuery.trim()
+    ? `No mileage records match "${searchQuery}".`
+    : "No vehicles are available for mileage monitoring."}
+</p>
     </div>
 
   ) : (

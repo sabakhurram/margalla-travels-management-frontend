@@ -9,8 +9,7 @@ import {
 } from "lucide-react";
 
 import "./AuditLogs.css";
-
-function AuditLogs() {
+function AuditLogs({ searchQuery = "" }) {
   const { session } = useAuth();
 
   const [auditLogs, setAuditLogs] = useState([]);
@@ -178,6 +177,19 @@ const formatAuditDetails = (log) => {
 
   return "No details available";
 };
+const displayedAuditLogs = searchQuery.trim()
+  ? auditLogs.filter((log) => {
+      const query = searchQuery.trim().toLowerCase();
+
+      return (
+        log.user?.name?.toLowerCase().includes(query) ||
+        log.profiles?.name?.toLowerCase().includes(query) ||
+        log.action?.toLowerCase().includes(query) ||
+        log.table_name?.toLowerCase().includes(query) ||
+        String(log.record_id || "").includes(query)
+      );
+    })
+  : auditLogs;
   return (
     <div className="audit-logs-page">
 
@@ -220,17 +232,22 @@ const formatAuditDetails = (log) => {
           <div className="audit-logs-loading">
             Loading audit logs...
           </div>
-        ) : auditLogs.length === 0 ? (
-          <div className="audit-logs-empty">
+   ) : displayedAuditLogs.length === 0 ? (
+       <div className="audit-logs-empty">
 
-            <ClipboardList size={40} />
+  <ClipboardList size={40} />
 
-            <h3>No audit logs found</h3>
+  <h3>
+    {searchQuery.trim()
+      ? "No matching audit logs"
+      : "No audit logs found"}
+  </h3>
 
-            <p>
-              Important system changes will appear here.
-            </p>
-
+  <p>
+    {searchQuery.trim()
+      ? `No audit logs match "${searchQuery.trim()}".`
+      : "Important system changes will appear here."}
+  </p>
           </div>
         ) : (
           <div className="audit-logs-table-wrapper">
@@ -247,7 +264,7 @@ const formatAuditDetails = (log) => {
 </thead>
 
               <tbody>
-  {auditLogs.map((log) => (
+ {displayedAuditLogs.map((log) => (
     <tr key={log.id}>
 
       {/* DATE */}

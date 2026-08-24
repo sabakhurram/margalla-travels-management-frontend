@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import "./Reports.css";
 
-function Reports() {
+function Reports({ searchQuery = "" }) {
   const { session } = useAuth();
 const [generating, setGenerating] =
   useState(false);
@@ -42,7 +42,30 @@ const [generating, setGenerating] =
 
   const formatNumber = (value) =>
     Number(value || 0).toLocaleString();
+const filteredReport = (report?.report || []).filter((item) => {
+  const query = searchQuery.trim().toLowerCase();
 
+  if (!query) return true;
+
+  const vehicleNumber =
+    item.vehicle?.registration_number?.toLowerCase() || "";
+
+  const vehicleModel =
+    item.vehicle?.model?.toLowerCase() || "";
+
+  const driverName =
+    item.driver?.name?.toLowerCase() || "";
+
+  const categoryName =
+    item.category?.name?.toLowerCase() || "";
+
+  return (
+    vehicleNumber.includes(query) ||
+    vehicleModel.includes(query) ||
+    driverName.includes(query) ||
+    categoryName.includes(query)
+  );
+});
 const generateReport = async () => {
   if (!session?.access_token) return;
 
@@ -66,26 +89,40 @@ const generateReport = async () => {
         data.message || "Failed to generate report"
       );
     }
-
+console.log("REPORT REQUEST:", {
+  year,
+  month,
+});
+console.log(
+  "MILEAGE UTILIZATION:",
+  dashboardData?.mileageUtilization
+);
+console.log("REPORT RESPONSE:", data);
     setReport(data);
 
   } catch (error) {
     console.error("Generate report error:", error);
 
     setError(error.message);
-
     setReport(null);
 
   } finally {
     setLoading(false);
   }
 };
+const handleMonthChange = (value) => {
+  setMonth(Number(value));
+};
 
+const handleYearChange = (value) => {
+  setYear(Number(value));
+};
   useEffect(() => {
     if (session?.access_token) {
       generateReport();
     }
-  }, [session]);
+  }, [session, year, month]);
+
 const handleDownloadPDF = async () => {
   try {
     setGenerating(true);
@@ -141,6 +178,7 @@ const handleDownloadPDF = async () => {
     setGenerating(false);
   }
 };
+
   return (
     <div className="reports-page">
 
@@ -196,9 +234,9 @@ const handleDownloadPDF = async () => {
 
           <select
             value={month}
-            onChange={(e) =>
-              setMonth(Number(e.target.value))
-            }
+           onChange={(e) =>
+  handleMonthChange(e.target.value)
+}
             className="reports-select"
           >
             {monthNames.map((name, index) => (
@@ -214,9 +252,9 @@ const handleDownloadPDF = async () => {
 
           <select
             value={year}
-            onChange={(e) =>
-              setYear(Number(e.target.value))
-            }
+          onChange={(e) =>
+  handleYearChange(e.target.value)
+}
             className="reports-select"
           >
             {Array.from(
@@ -400,30 +438,39 @@ const handleDownloadPDF = async () => {
                 </p>
               </div>
 
-              <div className="reports-vehicle-count">
-               {report.report?.length || 0} vehicles
-              </div>
+             <div className="reports-table-header-actions">
+
+
+
+  <div className="reports-vehicle-count">
+    {filteredReport.length} vehicles
+  </div>
+
+</div>
 
             </div>
 
 
          {!report.report ||
-report.report.length === 0 ? (
+filteredReport.length === 0 ? (
 
-              <div className="reports-empty">
+               <div className="reports-empty">
 
-                <FileText size={40} />
+    <FileText size={40} />
 
-                <h3>
-                  No mileage data found
-                </h3>
+    <h3>
+      {searchQuery.trim()
+        ? "No matching vehicles found"
+        : "No mileage data found"}
+    </h3>
 
-                <p>
-                  No mileage records were found
-                  for this month.
-                </p>
+    <p>
+      {searchQuery.trim()
+        ? "Try a different vehicle, driver or category."
+        : "No mileage records were found for this month."}
+    </p>
 
-              </div>
+  </div>
 
             ) : (
 
@@ -451,7 +498,7 @@ report.report.length === 0 ? (
 
                   <tbody>
 
-                  {report.report.map((item) => {
+            { filteredReport.map((item) => {
 
                       const actual =
                         Number(

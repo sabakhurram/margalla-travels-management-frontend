@@ -9,7 +9,7 @@ import {
 
 import "./Categories.css";
 
-function Categories() {
+function Categories({ searchQuery = "" }) {
   const { session } = useAuth();
 
   const [categories, setCategories] = useState([]);
@@ -187,6 +187,13 @@ const fetchMonthlyLimit = async (categoryId) => {
     console.error("Fetch monthly limit error:", error);
   }
 };
+const displayedCategories = searchQuery.trim()
+  ? categories.filter((category) =>
+      category.name
+        ?.toLowerCase()
+        .includes(searchQuery.trim().toLowerCase())
+    )
+  : categories;
 const handleSaveMonthlyLimit = async (e) => {
   e.preventDefault();
 
@@ -477,26 +484,30 @@ const handleSaveMonthlyLimit = async (e) => {
           <p>{error}</p>
         </div>
       )}
+{!loading &&
+  !error &&
+  displayedCategories.length === 0 && (
+    <div className="categories-state">
+      <h3>
+        {searchQuery.trim()
+          ? "No categories found"
+          : "No categories yet"}
+      </h3>
 
-      {!loading &&
-        !error &&
-        categories.length === 0 && (
-          <div className="categories-state">
-            <h3>No categories yet</h3>
-
-            <p>
-              Add your first vehicle category to get
-              started.
-            </p>
-          </div>
-        )}
+      <p>
+        {searchQuery.trim()
+          ? `No categories match "${searchQuery.trim()}".`
+          : "Add your first vehicle category to get started."}
+      </p>
+    </div>
+  )}
 
       {!loading &&
         !error &&
         categories.length > 0 && (
           <div className="categories-grid">
 
-            {categories.map((category) => (
+            {displayedCategories.map((category) => (
             <div
   className="category-card"
   key={category.id}

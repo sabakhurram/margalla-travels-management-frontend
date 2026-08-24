@@ -26,6 +26,7 @@ import "./AdminDashboard.css";
 function AdminDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const [searchQuery, setSearchQuery] = useState("");
   const { session } = useAuth();
 
 const [dashboardData, setDashboardData] = useState(null);
@@ -60,6 +61,10 @@ useEffect(() => {
             "Failed to load dashboard"
         );
       }
+console.log(
+  "FIRST MILEAGE VEHICLE:",
+  data.mileageUtilization?.[0]?.vehicle
+);
 
       setDashboardData(data);
 
@@ -80,7 +85,72 @@ useEffect(() => {
 
   fetchDashboardOverview();
 }, [session]);
+const normalizedSearchQuery = searchQuery
+  .trim()
+  .toLowerCase();
 
+const filteredMileageUtilization = (
+  dashboardData?.mileageUtilization || []
+).filter((item) => {
+  if (!normalizedSearchQuery) return true;
+
+  return (
+    item.vehicle?.registration_number
+      ?.toLowerCase()
+      .includes(normalizedSearchQuery) ||
+    item.vehicle?.model
+      ?.toLowerCase()
+      .includes(normalizedSearchQuery)
+  );
+});
+
+const filteredRecentActivity = (
+  dashboardData?.recentActivity || []
+).filter((item) => {
+  if (!normalizedSearchQuery) return true;
+
+  return (
+    item.vehicle?.registration_number
+      ?.toLowerCase()
+      .includes(normalizedSearchQuery) ||
+    item.vehicle?.model
+      ?.toLowerCase()
+      .includes(normalizedSearchQuery) ||
+    item.driver?.name
+      ?.toLowerCase()
+      .includes(normalizedSearchQuery) ||
+    item.user?.name
+      ?.toLowerCase()
+      .includes(normalizedSearchQuery) ||
+    item.action
+      ?.toLowerCase()
+      .includes(normalizedSearchQuery)
+  );
+});
+
+const filteredAlerts = (
+  dashboardData?.alerts || []
+).filter((item) => {
+  if (!normalizedSearchQuery) return true;
+
+  return (
+    item.vehicle?.registration_number
+      ?.toLowerCase()
+      .includes(normalizedSearchQuery) ||
+    item.vehicle?.model
+      ?.toLowerCase()
+      .includes(normalizedSearchQuery) ||
+    item.driver?.name
+      ?.toLowerCase()
+      .includes(normalizedSearchQuery) ||
+    item.message
+      ?.toLowerCase()
+      .includes(normalizedSearchQuery) ||
+    item.title
+      ?.toLowerCase()
+      .includes(normalizedSearchQuery)
+  );
+});
   return (
     <div className="admin-layout">
 <Sidebar
@@ -90,15 +160,18 @@ useEffect(() => {
   setActiveTab={(tab) => {
     setFilteredDriverIds(null);
     setFilteredMileageVehicleIds(null);
+    setSearchQuery("");
     setActiveTab(tab);
   }}
 />
 
       <main className="admin-main">
 
-        <AdminHeader
+     <AdminHeader
   setSidebarOpen={setSidebarOpen}
   activeTab={activeTab}
+  searchQuery={searchQuery}
+  setSearchQuery={setSearchQuery}
 />
 
        <div className="admin-content">
@@ -170,8 +243,8 @@ useEffect(() => {
 </div>
 
 <div className="dashboard-charts">
-  <MileageChart
-  data={dashboardData?.mileageUtilization || []}
+<MileageChart
+  data={filteredMileageUtilization}
   loading={dashboardLoading}
 />
   <VehicleStatusChart
@@ -187,14 +260,13 @@ useEffect(() => {
 </div>
 <div className="dashboard-bottom-grid">
 
- <RecentActivity
-  data={dashboardData?.recentActivity || []}
+<RecentActivity
+  data={filteredRecentActivity}
   loading={dashboardLoading}
-onViewAll={() => setActiveTab("audit-logs")}
+  onViewAll={() => setActiveTab("audit-logs")}
 />
-
 <AlertsPanel
-  data={dashboardData?.alerts || []}
+  data={filteredAlerts}
   loading={dashboardLoading}
 
   onViewDrivers={(driverIds) => {
@@ -216,24 +288,30 @@ onViewAll={() => setActiveTab("audit-logs")}
     </>
   )}
 
-  {activeTab === "categories" && (
-    <Categories />
-  )}
+ {activeTab === "categories" && (
+  <Categories searchQuery={searchQuery} />
+)}
  {activeTab === "vehicles" && (
-    <Vehicles />
-  )}
-   {activeTab === "drivers" && (
+  <Vehicles searchQuery={searchQuery} />
+)}
+  {activeTab === "drivers" && (
   <Drivers
     filteredDriverIds={filteredDriverIds}
+    searchQuery={searchQuery}
   />
 )}
- {activeTab === "mileage" && (
+{activeTab === "mileage" && (
   <Mileage
     filteredVehicleIds={filteredMileageVehicleIds}
+    searchQuery={searchQuery}
   />
 )}
-{activeTab === "reports" && <Reports />}
-{activeTab === "audit-logs" &&(<AuditLogs />) }
+{activeTab === "reports" && (
+  <Reports searchQuery={searchQuery} />
+)}
+{activeTab === "audit-logs" && (
+  <AuditLogs searchQuery={searchQuery} />
+)}
 </div>
 
   

@@ -12,7 +12,7 @@ import {
 
 import "./Vehicles.css";
 
-function Vehicles() {
+function Vehicles({ searchQuery }) {
   const { session } = useAuth();
 
   const [vehicles, setVehicles] = useState([]);
@@ -35,7 +35,27 @@ const [vehicleForm, setVehicleForm] = useState({
   assigned_driver_id: "",
   status: "active",
 });
+const normalizedSearch = searchQuery.trim().toLowerCase();
 
+const filteredVehicles = vehicles.filter((vehicle) => {
+  if (!normalizedSearch) return true;
+
+  const searchableFields = [
+    vehicle.model,
+    vehicle.registration_number,
+    vehicle.status,
+    vehicle.categories?.name,
+    vehicle.drivers?.name,
+    `vehicle ${vehicle.id}`,
+    `${vehicle.id}`,
+  ];
+
+  return searchableFields.some((field) =>
+    String(field || "")
+      .toLowerCase()
+      .includes(normalizedSearch)
+  );
+});
 const fetchCategories = async () => {
   try {
     const response = await fetch(
@@ -589,7 +609,7 @@ const handleDeleteVehicle = async () => {
               {
                 vehicles.filter(
                   (vehicle) =>
-                    vehicle.status?.toLowerCase() === "available"
+                    vehicle.status?.toLowerCase() === "assigned"
                 ).length
               }
             </strong>
@@ -643,9 +663,13 @@ const handleDeleteVehicle = async () => {
           <div>
             <h3>Fleet Vehicles</h3>
 
-            <p>
-              View and manage all registered vehicles.
-            </p>
+          <p>
+  {searchQuery.trim()
+    ? `${filteredVehicles.length} vehicle${
+        filteredVehicles.length !== 1 ? "s" : ""
+      } found`
+    : "View and manage all registered vehicles."}
+</p>
           </div>
 
           <button
@@ -688,6 +712,7 @@ const handleDeleteVehicle = async () => {
         )}
 
         {!loading && !error && vehicles.length === 0 && (
+          
           <div className="vehicles-state">
 
             <div className="empty-vehicle-icon">
@@ -713,8 +738,27 @@ const handleDeleteVehicle = async () => {
 
           </div>
         )}
+{!loading &&
+  !error &&
+  vehicles.length > 0 &&
+  filteredVehicles.length === 0 && (
+    <div className="vehicles-state">
 
-        {!loading && !error && vehicles.length > 0 && (
+      <div className="empty-vehicle-icon">
+        <CarFront size={30} />
+      </div>
+
+      <h3>No matching vehicles</h3>
+
+      <p>
+        No vehicles match "{searchQuery}".
+      </p>
+
+    </div>
+)}
+    {!loading &&
+  !error &&
+  filteredVehicles.length > 0 && (
           <div className="vehicles-table-wrapper">
 
             <table className="vehicles-table">
@@ -732,7 +776,7 @@ const handleDeleteVehicle = async () => {
               </thead>
 
               <tbody>
-                {vehicles.map((vehicle) => (
+                {filteredVehicles.map((vehicle) => (
                   <tr key={vehicle.id}>
 
                     <td>

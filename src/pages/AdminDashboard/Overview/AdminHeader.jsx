@@ -9,7 +9,12 @@ import { useAuth } from "../../../context/AuthContext";
 
 import "./AdminHeader.css";
 
-function AdminHeader({ setSidebarOpen, activeTab }) {
+function AdminHeader({
+  setSidebarOpen,
+  activeTab,
+  searchQuery,
+  setSearchQuery,
+}) {
   const { profile } = useAuth();
 const pageTitles = {
   overview: "Dashboard",
@@ -48,10 +53,12 @@ const currentTitle = pageTitles[activeTab] || "Dashboard";
         <div className="header-search">
           <Search size={17} />
 
-          <input
-            type="text"
-            placeholder="Search anything..."
-          />
+        <input
+  type="text"
+  placeholder={`Search ${currentTitle.toLowerCase()}...`}
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+/>
         </div>
 
         <button

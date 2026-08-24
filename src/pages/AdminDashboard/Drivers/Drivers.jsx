@@ -4,7 +4,10 @@ import { Plus, Pencil, Trash2, UserRound } from "lucide-react";
 
 import "./Drivers.css";
 
-function Drivers({ filteredDriverIds = null }) {
+function Drivers({
+  filteredDriverIds = null,
+  searchQuery = "",
+}) {
   const { session } = useAuth();
 
   const [drivers, setDrivers] = useState([]);
@@ -186,11 +189,33 @@ const openEditForm = (driver) => {
       setError(error.message);
     }
   };
-const displayedDrivers = filteredDriverIds
-  ? drivers.filter((driver) =>
-      filteredDriverIds.includes(driver.id)
-    )
-  : drivers;
+const normalizedSearch = searchQuery
+  .trim()
+  .toLowerCase();
+
+const displayedDrivers = drivers.filter((driver) => {
+  // Alert filter
+  const matchesAlertFilter =
+    !filteredDriverIds ||
+    filteredDriverIds.includes(driver.id);
+
+  // Search filter
+  const matchesSearch =
+    !normalizedSearch ||
+    [
+      driver.name,
+      driver.phone,
+      driver.status,
+      driver.vehicles?.[0]?.registration_number,
+      driver.vehicles?.[0]?.model,
+    ].some((field) =>
+      String(field || "")
+        .toLowerCase()
+        .includes(normalizedSearch)
+    );
+
+  return matchesAlertFilter && matchesSearch;
+});
   return (
     <div className="drivers-page">
 
@@ -331,15 +356,21 @@ const displayedDrivers = filteredDriverIds
             Loading drivers...
           </div>
        ) : displayedDrivers.length === 0 ? (
-          <div className="drivers-empty">
-            <UserRound size={40} />
+         <div className="drivers-empty">
+    <UserRound size={40} />
 
-            <h3>No drivers found</h3>
+    <h3>
+      {searchQuery.trim()
+        ? "No matching drivers found"
+        : "No drivers found"}
+    </h3>
 
-            <p>
-              Add your first driver to get started.
-            </p>
-          </div>
+    <p>
+      {searchQuery.trim()
+        ? `No drivers match "${searchQuery}".`
+        : "Add your first driver to get started."}
+    </p>
+  </div>
         ) : (
           <div className="drivers-table-wrapper">
 
