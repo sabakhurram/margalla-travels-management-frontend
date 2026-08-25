@@ -15,29 +15,53 @@ function SetPassword() {
   const navigate = useNavigate();
 
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] =
+    useState("");
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] =
+  const [showPassword, setShowPassword] =
     useState(false);
 
+  const [
+    showConfirmPassword,
+    setShowConfirmPassword,
+  ] = useState(false);
+
   const [loading, setLoading] = useState(false);
-  const [checkingSession, setCheckingSession] = useState(true);
+
+  const [
+    checkingSession,
+    setCheckingSession,
+  ] = useState(true);
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
+  const [isRecovery, setIsRecovery] =
+    useState(false);
+
   useEffect(() => {
-    const initializeInvitation = async () => {
+    let recoveryDetected = false;
+
+    /*
+     * Listen for Supabase authentication events.
+     *
+     * PASSWORD_RECOVERY is triggered when the user
+     * opens a password reset link.
+     */
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(
+      (event) => {
+        if (event === "PASSWORD_RECOVERY") {
+          recoveryDetected = true;
+          setIsRecovery(true);
+        }
+      }
+    );
+
+    const initializePasswordSession = async () => {
       try {
         setError("");
-
-        /*
-         * Supabase invitation links can contain a temporary
-         * authorization code.
-         *
-         * We exchange that code for a real Supabase session.
-         */
 
         const params = new URLSearchParams(
           window.location.search
@@ -45,66 +69,119 @@ function SetPassword() {
 
         const code = params.get("code");
 
-        if (code) {
-          const { error } =
-            await supabase.auth.exchangeCodeForSession(code);
-
-          if (error) {
-            console.error(
-              "Invitation session error:",
-              error
-            );
-
-            setError(
-              "This invitation link is invalid or has expired. Please ask the administrator to send a new invitation."
-            );
-
-            return;
-          }
-
-          // Remove the code from the browser URL
-          window.history.replaceState(
-            {},
-            document.title,
-            window.location.pathname
-          );
-        }
-
         /*
-         * Now check whether Supabase has a valid session.
+         * Check if Supabase has already established
+         * a session from a password recovery link.
          */
-
         const {
           data: { session },
         } = await supabase.auth.getSession();
 
-        if (!session) {
-          setError(
-            "This invitation link is invalid or has expired. Please ask the administrator to send a new invitation."
+        if (session) {
+          /*
+           * The recovery event should identify
+           * password reset sessions.
+           */
+          setIsRecovery(recoveryDetected);
+
+          console.log(
+            "Password session established:",
+            session.user.email
           );
 
           return;
         }
 
-        console.log(
-          "Invitation session established:",
-          session.user.email
+        /*
+         * Driver invitation links contain an
+         * authorization code that must be exchanged
+         * for a Supabase session.
+         */
+        if (code) {
+          const { error } =
+            await supabase.auth.exchangeCodeForSession(
+              code
+            );
+
+          if (error) {
+            console.error(
+              "Password session error:",
+              error
+            );
+
+            setError(
+              "This password link is invalid or has expired. Please request a new one."
+            );
+
+            return;
+          }
+
+          /*
+           * Remove the authorization code
+           * from the browser URL.
+           */
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
+
+          const {
+            data: { session: newSession },
+          } = await supabase.auth.getSession();
+
+          if (!newSession) {
+            setError(
+              "Unable to establish your password session. Please request a new link."
+            );
+
+            return;
+          }
+
+          /*
+           * If PASSWORD_RECOVERY was not triggered,
+           * this is treated as the driver invitation
+           * flow.
+           */
+          setIsRecovery(recoveryDetected);
+
+          console.log(
+            "Password session established:",
+            newSession.user.email
+          );
+
+          return;
+        }
+
+        /*
+         * No session and no valid authorization code.
+         */
+        setError(
+          "This password link is invalid or has expired. Please request a new one."
         );
+
       } catch (error) {
         console.error(
-          "Initialize invitation error:",
+          "Initialize password session error:",
           error
         );
 
         setError(
-          "Unable to verify your invitation. Please try again."
+          "Unable to verify your password link. Please try again."
         );
       } finally {
         setCheckingSession(false);
       }
     };
 
-    initializeInvitation();
+    initializePasswordSession();
+
+    /*
+     * Clean up the auth event listener.
+     */
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const handleSubmit = async (e) => {
@@ -127,24 +204,20 @@ function SetPassword() {
     try {
       setLoading(true);
 
-      /*
-       * Make sure a session still exists before
-       * attempting to change the password.
-       */
-
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
       if (!session) {
         throw new Error(
-          "Your invitation session has expired. Please request a new invitation."
+          "Your password session has expired. Please request a new link."
         );
       }
 
-      const { error } = await supabase.auth.updateUser({
-        password,
-      });
+      const { error } =
+        await supabase.auth.updateUser({
+          password,
+        });
 
       if (error) {
         throw error;
@@ -153,17 +226,20 @@ function SetPassword() {
       setSuccess(true);
 
       setTimeout(() => {
-        navigate("/login");
+        navigate("/login", {
+          replace: true,
+        });
       }, 2000);
+
     } catch (error) {
       console.error(
-        "Set password error:",
+        "Password update error:",
         error
       );
 
       setError(
         error.message ||
-          "Failed to set password. Please try again."
+          "Failed to update your password. Please try again."
       );
     } finally {
       setLoading(false);
@@ -174,7 +250,9 @@ function SetPassword() {
     return (
       <div className="set-password-page">
         <div className="set-password-card">
-          <p>Verifying your invitation...</p>
+          <p>
+            Verifying your password link...
+          </p>
         </div>
       </div>
     );
@@ -191,12 +269,19 @@ function SetPassword() {
         {!success ? (
           <>
             <div className="set-password-header">
-              <h1>Set Your Password</h1>
+
+              <h1>
+                {isRecovery
+                  ? "Reset Your Password"
+                  : "Set Your Password"}
+              </h1>
 
               <p>
-                Create a password to access your
-                Margalla Travels driver account.
+                {isRecovery
+                  ? "Create a new password for your Margalla Travels account."
+                  : "Create a password to access your Margalla Travels driver account."}
               </p>
+
             </div>
 
             {error && (
@@ -209,9 +294,13 @@ function SetPassword() {
               <form onSubmit={handleSubmit}>
 
                 <div className="set-password-group">
-                  <label>New Password</label>
+
+                  <label>
+                    New Password
+                  </label>
 
                   <div className="set-password-input-wrapper">
+
                     <input
                       type={
                         showPassword
@@ -235,6 +324,11 @@ function SetPassword() {
                           (prev) => !prev
                         )
                       }
+                      aria-label={
+                        showPassword
+                          ? "Hide password"
+                          : "Show password"
+                      }
                     >
                       {showPassword ? (
                         <EyeOff size={18} />
@@ -242,13 +336,18 @@ function SetPassword() {
                         <Eye size={18} />
                       )}
                     </button>
+
                   </div>
                 </div>
 
                 <div className="set-password-group">
-                  <label>Confirm Password</label>
+
+                  <label>
+                    Confirm Password
+                  </label>
 
                   <div className="set-password-input-wrapper">
+
                     <input
                       type={
                         showConfirmPassword
@@ -274,6 +373,11 @@ function SetPassword() {
                           (prev) => !prev
                         )
                       }
+                      aria-label={
+                        showConfirmPassword
+                          ? "Hide password"
+                          : "Show password"
+                      }
                     >
                       {showConfirmPassword ? (
                         <EyeOff size={18} />
@@ -281,6 +385,7 @@ function SetPassword() {
                         <Eye size={18} />
                       )}
                     </button>
+
                   </div>
                 </div>
 
@@ -290,12 +395,17 @@ function SetPassword() {
                   disabled={loading}
                 >
                   {loading
-                    ? "Setting Password..."
+                    ? isRecovery
+                      ? "Resetting Password..."
+                      : "Setting Password..."
+                    : isRecovery
+                    ? "Reset Password"
                     : "Set Password"}
                 </button>
 
               </form>
             )}
+
           </>
         ) : (
           <div className="set-password-success">
@@ -303,12 +413,15 @@ function SetPassword() {
             <CheckCircle size={42} />
 
             <h2>
-              Password Set Successfully
+              {isRecovery
+                ? "Password Reset Successfully"
+                : "Password Set Successfully"}
             </h2>
 
             <p>
-              Your driver account is ready.
-              Redirecting you to the login page...
+              {isRecovery
+                ? "Your password has been updated. Redirecting you to the login page..."
+                : "Your driver account is ready. Redirecting you to the login page..."}
             </p>
 
           </div>

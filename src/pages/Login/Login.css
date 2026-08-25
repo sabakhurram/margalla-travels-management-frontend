@@ -738,3 +738,9 @@ body,
     margin-right: 5px;
   }
 }
+.login-success {
+  color: #0797a8;
+  font-size: 14px;
+  margin: 10px 0;
+  line-height: 1.5;
+}
