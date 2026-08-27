@@ -83,13 +83,7 @@ function AlertsPanel({
 
         </div>
 
-        <button
-          type="button"
-          className="alerts-view-all"
-        >
-          View all
-          <ArrowUpRight size={14} />
-        </button>
+    
 
       </div>
 

@@ -407,21 +407,27 @@
 /* =========================================================
    TABLE CARD
 ========================================================= */
-
 .drivers-table-card {
   width: 100%;
-
+  max-width: 100%;
   overflow: hidden;
-
   background: #ffffff;
-
   border: 1px solid #dce5f0;
   border-radius: 16px;
-
   box-shadow: 0 6px 22px rgba(35, 72, 112, 0.055);
+  box-sizing: border-box;
 }
+/* =========================================================
+   TABLE WRAPPER - RESPONSIVE SCROLL
+========================================================= */
 
-
+.drivers-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
 /* =========================================================
    TABLE
 ========================================================= */
@@ -908,6 +914,142 @@
 
   .drivers-cancel-btn,
   .drivers-save-btn {
+    width: 100%;
+  }
+}
+/* ================= DELETE CONFIRMATION MODAL ================= */
+
+.delete-modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 1000;
+  padding: 20px;
+}
+
+.delete-modal {
+  width: 100%;
+  max-width: 420px;
+
+  background: #ffffff;
+  border-radius: 16px;
+
+  padding: 32px;
+
+  text-align: center;
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.18);
+
+  animation: deleteModalIn 0.2s ease;
+}
+
+@keyframes deleteModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.delete-modal-icon {
+  width: 52px;
+  height: 52px;
+
+  margin: 0 auto 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.delete-modal h2 {
+  margin: 0 0 10px;
+
+  font-size: 22px;
+  font-weight: 700;
+
+  color: #1f2937;
+}
+
+.delete-modal p {
+  margin: 0;
+
+  color: #6b7280;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.delete-modal p strong {
+  color: #374151;
+}
+
+.delete-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+
+  margin-top: 28px;
+}
+
+.delete-modal-actions button {
+  border: none;
+  border-radius: 8px;
+
+  padding: 10px 20px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.delete-modal-cancel {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.delete-modal-cancel:hover {
+  background: #e5e7eb;
+}
+
+.delete-modal-confirm {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.delete-modal-confirm:hover {
+  background: #b91c1c;
+}
+
+@media (max-width: 480px) {
+  .delete-modal {
+    padding: 26px 20px;
+  }
+
+  .delete-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .delete-modal-actions button {
     width: 100%;
   }
 }

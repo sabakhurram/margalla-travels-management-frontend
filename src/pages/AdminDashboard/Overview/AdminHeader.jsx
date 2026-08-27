@@ -295,10 +295,6 @@ const [profileOpen, setProfileOpen] = useState(false);
 
       <div className="profile-dropdown-divider" />
 
-      <button className="profile-dropdown-item">
-        <UserRound size={16} />
-        <span>Profile</span>
-      </button>
 
     </div>
   )}

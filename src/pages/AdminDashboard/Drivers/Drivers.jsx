@@ -16,7 +16,7 @@ function Drivers({
 
   const [showForm, setShowForm] = useState(false);
   const [editingDriver, setEditingDriver] = useState(null);
-
+const [driverToDelete, setDriverToDelete] = useState(null);
  const [formData, setFormData] = useState({
   name: "",
   phone: "",
@@ -153,42 +153,44 @@ const openEditForm = (driver) => {
     }
   };
 
-  const handleDelete = async (driver) => {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete ${driver.name}?`
+  const handleDelete = async () => {
+  if (!driverToDelete) return;
+
+  try {
+    setError("");
+
+    const response = await fetch(
+      `http://localhost:5000/api/drivers/${driverToDelete.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      }
     );
 
-    if (!confirmed) return;
+    const data = await response.json();
 
-    try {
-      setError("");
-
-      const response = await fetch(
-        `http://localhost:5000/api/drivers/${driver.id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${session?.access_token}`,
-          },
-        }
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Failed to delete driver"
       );
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || "Failed to delete driver"
-        );
-      }
-
-      setDrivers((prev) =>
-        prev.filter((item) => item.id !== driver.id)
-      );
-    } catch (error) {
-      console.error("Delete driver error:", error);
-      setError(error.message);
     }
-  };
+
+    setDrivers((prev) =>
+      prev.filter(
+        (item) => item.id !== driverToDelete.id
+      )
+    );
+
+    setDriverToDelete(null);
+
+  } catch (error) {
+    console.error("Delete driver error:", error);
+    setError(error.message);
+    setDriverToDelete(null);
+  }
+};
 const normalizedSearch = searchQuery
   .trim()
   .toLowerCase();
@@ -439,15 +441,13 @@ const displayedDrivers = drivers.filter((driver) => {
                           <Pencil size={17} />
                         </button>
 
-                        <button
-                          className="driver-delete-btn"
-                          onClick={() =>
-                            handleDelete(driver)
-                          }
-                          title="Delete driver"
-                        >
-                          <Trash2 size={17} />
-                        </button>
+                       <button
+  className="driver-delete-btn"
+  onClick={() => setDriverToDelete(driver)}
+  title="Delete driver"
+>
+  <Trash2 size={17} />
+</button>
 
                       </div>
                     </td>
@@ -462,7 +462,45 @@ const displayedDrivers = drivers.filter((driver) => {
         )}
 
       </div>
+{driverToDelete && (
+  <div className="delete-modal-overlay">
 
+    <div className="delete-modal">
+
+      <div className="delete-modal-icon">
+        <Trash2 size={24} />
+      </div>
+
+      <h2>Delete Driver?</h2>
+
+      <p>
+        Are you sure you want to delete{" "}
+        <strong>{driverToDelete.name}</strong>?
+        This action cannot be undone.
+      </p>
+
+      <div className="delete-modal-actions">
+
+        <button
+          className="delete-modal-cancel"
+          onClick={() => setDriverToDelete(null)}
+        >
+          Cancel
+        </button>
+
+        <button
+          className="delete-modal-confirm"
+          onClick={handleDelete}
+        >
+          Delete Driver
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+)}
     </div>
   );
 }

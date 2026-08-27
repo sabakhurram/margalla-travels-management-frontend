@@ -1246,3 +1246,16 @@ background: linear-gradient(
 
   margin-bottom: 28px;
 }
+.vehicle-form-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  margin-bottom: 18px;
+  border: 1px solid rgba(220, 38, 38, 0.25);
+  border-radius: 8px;
+  background: rgba(220, 38, 38, 0.08);
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 500;
+}

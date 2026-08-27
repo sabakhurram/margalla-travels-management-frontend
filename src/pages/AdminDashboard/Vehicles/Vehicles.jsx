@@ -436,6 +436,12 @@ const handleDeleteVehicle = async () => {
       : handleAddVehicle
   }
 >
+  {error && (
+  <div className="vehicle-form-error">
+    <CircleAlert size={17} />
+    <span>{error}</span>
+  </div>
+)}
 
       <div className="vehicle-form-grid">
 
@@ -697,8 +703,8 @@ const handleDeleteVehicle = async () => {
           </div>
         )}
 
-        {!loading && error && (
-          <div className="vehicles-state vehicles-error">
+       {!loading && error && !showForm && (
+  <div className="vehicles-state vehicles-error">
 
             <CircleAlert size={24} />
 
