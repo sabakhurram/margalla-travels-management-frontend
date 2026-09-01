@@ -7,6 +7,7 @@ import {
   ClipboardList,
   FileText,
   LogOut,
+    ShieldCheck,
   Menu,
   X,
   UserRound,
@@ -41,6 +42,12 @@ function Sidebar({
       icon: Users,
       tab: "drivers",
     },
+    {
+  
+  label: "Admins",
+  icon: Users,
+  tab: "admins",
+},
     {
       label: "Mileage",
       icon: Gauge,

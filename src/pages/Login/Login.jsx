@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  LogIn,
-} from "lucide-react";
+import { User, Lock, Eye, EyeOff, LogIn } from "lucide-react";
 
 import { supabase } from "../../config/supabase";
 import { useAuth } from "../../context/AuthContext";
@@ -16,321 +10,201 @@ import logo from "../../assets/teal-logo.png";
 
 function Login() {
   const navigate = useNavigate();
+  const { user, profile, loading: authLoading } = useAuth();
 
-  const {
-    user,
-    profile,
-    loading: authLoading,
-  } = useAuth();
-
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
   const [loading, setLoading] = useState(false);
-  const [forgotLoading, setForgotLoading] = useState(false);
-
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  /*
-   * Load remembered email when the login page opens.
-   */
   useEffect(() => {
-    const rememberedEmail =
-      localStorage.getItem("rememberedEmail");
-
-    if (rememberedEmail) {
-      setEmail(rememberedEmail);
+    const rememberedUsername = localStorage.getItem("rememberedUsername");
+    if (rememberedUsername) {
+      setUsername(rememberedUsername);
       setRememberMe(true);
     }
   }, []);
 
-  /*
-   * Redirect authenticated users
-   * according to their role.
-   */
-  useEffect(() => {
-    if (authLoading || !user || !profile) {
-      return;
-    }
+  
+useEffect(() => {
+  const rememberedUsername = localStorage.getItem("rememberedUsername");
 
-    if (profile.role === "admin") {
-      navigate("/dashboard", { replace: true });
-    } else if (profile.role === "driver") {
-      navigate("/driver-dashboard", {
-        replace: true,
-      });
-    }
-  }, [
-    user,
-    profile,
-    authLoading,
-    navigate,
-  ]);
+  if (rememberedUsername) {
+    setUsername(rememberedUsername);
+    setRememberMe(true);
+  }
+}, []);
 
-  /*
-   * Handle login.
-   */
-  const handleLogin = async (e) => {
-    e.preventDefault();
+useEffect(() => {
+  if (authLoading) return;
 
-    setError("");
-    setSuccess("");
-    setLoading(true);
+  if (!user || !profile) return;
 
-    /*
-     * Remember only the email address.
-     * Never store the password.
-     */
-    if (rememberMe) {
-      localStorage.setItem(
-        "rememberedEmail",
-        email
-      );
-    } else {
-      localStorage.removeItem(
-        "rememberedEmail"
-      );
-    }
+  // User was created with a temporary password
+  if (user.user_metadata?.must_reset_password === true) {
+    setLoading(false);
+    navigate("/set-password", { replace: true });
+    return;
+  }
 
-    const { error } =
-      await supabase.auth.signInWithPassword({
-        email,
+  // Normal login
+  setLoading(false);
+
+  if (profile.role === "admin") {
+    navigate("/dashboard", { replace: true });
+  } else if (profile.role === "driver") {
+    navigate("/driver-dashboard", { replace: true });
+  }
+}, [user, profile, authLoading, navigate]);
+
+const handleLogin = async (e) => {
+  e.preventDefault();
+
+  setError("");
+  setLoading(true);
+
+  const normalizedUsername = username.trim().toLowerCase();
+
+  if (rememberMe) {
+    localStorage.setItem("rememberedUsername", normalizedUsername);
+  } else {
+    localStorage.removeItem("rememberedUsername");
+  }
+
+  try {
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: normalizedUsername,
         password,
-      });
+      }),
+    });
 
-    if (error) {
-      setError(error.message);
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(data.message || "Invalid username or password");
       setLoading(false);
       return;
     }
 
-    setLoading(false);
-
-    /*
-     * AuthContext will detect the new session
-     * and the useEffect above will redirect
-     * according to the user's role.
-     */
-  };
-
-  /*
-   * Handle forgot password.
-   */
-  const handleForgotPassword = async () => {
-    setError("");
-    setSuccess("");
-
-    /*
-     * Make sure the user has entered an email.
-     */
-    if (!email.trim()) {
-      setError(
-        "Please enter your email address first."
-      );
+    if (!data.session?.access_token || !data.session?.refresh_token) {
+      setError("Login session was not returned. Please try again.");
+      setLoading(false);
       return;
     }
 
-    try {
-      setForgotLoading(true);
+ const { data: sessionData, error: sessionError } =
+  await supabase.auth.setSession({
+    access_token: data.session.access_token,
+    refresh_token: data.session.refresh_token,
+  });
 
-      const { error } =
-        await supabase.auth.resetPasswordForEmail(
-          email.trim(),
-          {
-            redirectTo: `${window.location.origin}/set-password`,
-          }
-        );
+if (sessionError) {
+  setError("Failed to establish session. Please try again.");
+  setLoading(false);
+  return;
+}
 
-      if (error) {
-        throw error;
-      }
+// Login is complete.
+// AuthContext will load the profile and the useEffect will redirect.
+setLoading(false);
 
-      setSuccess(
-        "Password reset instructions have been sent to your email."
-      );
-    } catch (error) {
-      console.error(
-        "Forgot password error:",
-        error
-      );
+    // Don't navigate here.
+    // AuthContext will update user/profile and the useEffect above
+    // will decide whether to go to set-password or dashboard.
 
-      setError(
-        error.message ||
-          "Unable to send password reset email. Please try again."
-      );
-    } finally {
-      setForgotLoading(false);
-    }
-  };
+  } catch (err) {
+    console.error("Login error:", err);
+    setError("Server error during login. Please try again.");
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="login-page">
       <div className="login-card">
-
-        <img
-          src={logo}
-          alt="Margalla Travels"
-          className="login-logo"
-        />
-
+        <img src={logo} alt="Margalla Travels" className="login-logo" />
         <h1>Welcome Back!</h1>
-
-        <p className="login-subtitle">
-          Sign in to continue to your account
-        </p>
+        <p className="login-subtitle">Sign in to continue to your account</p>
 
         <form onSubmit={handleLogin}>
-
-          {/* Email */}
           <div className="input-group">
             <div className="input-wrapper">
-              <Mail
-                className="input-icon"
-                size={20}
-              />
-
+              <User className="input-icon" size={20} />
               <div className="input-content">
-                <label htmlFor="email">
-                  Email
-                </label>
-
+                <label htmlFor="username">Username</label>
                 <input
-                  id="email"
-                  type="email"
-                  value={email}
+                  id="username"
+                  type="text"
+                  value={username}
                   onChange={(e) => {
-                    setEmail(e.target.value);
+                    setUsername(e.target.value);
                     setError("");
-                    setSuccess("");
                   }}
-                  placeholder="Enter your email"
+                  placeholder="Enter your username"
                   required
                 />
               </div>
             </div>
           </div>
 
-          {/* Password */}
           <div className="input-group">
             <div className="input-wrapper">
-              <Lock
-                className="input-icon"
-                size={20}
-              />
-
+              <Lock className="input-icon" size={20} />
               <div className="input-content">
-                <label htmlFor="password">
-                  Password
-                </label>
-
+                <label htmlFor="password">Password</label>
                 <input
                   id="password"
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
+                  type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value);
                     setError("");
-                    setSuccess("");
                   }}
                   placeholder="Enter your password"
                   required
                 />
               </div>
-
               <button
                 type="button"
                 className="password-toggle"
-                onClick={() =>
-                  setShowPassword(
-                    (prev) => !prev
-                  )
-                }
-                aria-label={
-                  showPassword
-                    ? "Hide password"
-                    : "Show password"
-                }
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? (
-                  <EyeOff size={19} />
-                ) : (
-                  <Eye size={19} />
-                )}
+                {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
               </button>
             </div>
           </div>
 
-          {/* Error */}
-          {error && (
-            <p className="login-error">
-              {error}
-            </p>
-          )}
+          {error && <p className="login-error">{error}</p>}
 
-          {/* Success */}
-          {success && (
-            <p className="login-success">
-              {success}
-            </p>
-          )}
-
-          {/* Remember + Forgot */}
           <div className="login-options">
-
             <label className="remember-me">
               <input
                 type="checkbox"
                 checked={rememberMe}
-                onChange={(e) =>
-                  setRememberMe(
-                    e.target.checked
-                  )
-                }
+                onChange={(e) => setRememberMe(e.target.checked)}
               />
-
-              <span>
-                Remember me
-              </span>
+              <span>Remember me</span>
             </label>
 
-            <button
-              type="button"
-              className="forgot-password"
-              onClick={handleForgotPassword}
-              disabled={forgotLoading}
-            >
-              {forgotLoading
-                ? "Sending..."
-                : "Forgot password?"}
-            </button>
-
+            <span className="forgot-password-note">
+              Forgot password? Contact your administrator.
+            </span>
           </div>
 
-          {/* Login Button */}
-          <button
-            type="submit"
-            className="login-button"
-            disabled={loading}
-          >
+          <button type="submit" className="login-button" disabled={loading}>
             <LogIn size={19} />
-
-            <span>
-              {loading
-                ? "Logging in..."
-                : "Sign In"}
-            </span>
+            <span>{loading ? "Logging in..." : "Sign In"}</span>
           </button>
-
         </form>
-
       </div>
     </div>
   );

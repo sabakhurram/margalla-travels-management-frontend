@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
-import { Plus, Pencil, Trash2, UserRound } from "lucide-react";
+import { Plus, Pencil, Trash2, UserRound,KeyRound , Copy, Check } from "lucide-react";
 
 import "./Drivers.css";
 
@@ -16,13 +16,23 @@ function Drivers({
 
   const [showForm, setShowForm] = useState(false);
   const [editingDriver, setEditingDriver] = useState(null);
-const [driverToDelete, setDriverToDelete] = useState(null);
- const [formData, setFormData] = useState({
-  name: "",
-  phone: "",
-  email: "",
-  status: "active",
-});
+  const [driverToDelete, setDriverToDelete] = useState(null);
+  const [driverToReset, setDriverToReset] = useState(null);
+  
+
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    username: "",
+    status: "active",
+  });
+
+  // Shown once right after a driver is created, since there's
+  // no email to deliver the password through automatically.
+  const [tempPasswordInfo, setTempPasswordInfo] = useState(null);
+  const [copied, setCopied] = useState(false);
+const [resettingPassword, setResettingPassword] =
+  useState(null);
   useEffect(() => {
     fetchDrivers();
   }, []);
@@ -67,43 +77,43 @@ const [driverToDelete, setDriverToDelete] = useState(null);
     }));
   };
 
-const openAddForm = () => {
-  setEditingDriver(null);
+  const openAddForm = () => {
+    setEditingDriver(null);
 
-  setFormData({
-    name: "",
-    phone: "",
-    email: "",
-    status: "active",
-  });
+    setFormData({
+      name: "",
+      phone: "",
+      username: "",
+      status: "active",
+    });
 
-  setShowForm(true);
-};
+    setShowForm(true);
+  };
 
-const openEditForm = (driver) => {
-  setEditingDriver(driver);
+  const openEditForm = (driver) => {
+    setEditingDriver(driver);
 
-  setFormData({
-    name: driver.name || "",
-    phone: driver.phone || "",
-    email: "",
-    status: driver.status || "active",
-  });
+    setFormData({
+      name: driver.name || "",
+      phone: driver.phone || "",
+      username: "",
+      status: driver.status || "active",
+    });
 
-  setShowForm(true);
-};
+    setShowForm(true);
+  };
 
- const closeForm = () => {
-  setShowForm(false);
-  setEditingDriver(null);
+  const closeForm = () => {
+    setShowForm(false);
+    setEditingDriver(null);
 
-  setFormData({
-    name: "",
-    phone: "",
-    email: "",
-    status: "active",
-  });
-};
+    setFormData({
+      name: "",
+      phone: "",
+      username: "",
+      status: "active",
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -144,6 +154,15 @@ const openEditForm = (driver) => {
         );
       } else {
         setDrivers((prev) => [...prev, data.driver]);
+
+        // New driver created — show the temp password once.
+        if (data.tempPassword) {
+          setTempPasswordInfo({
+            username: formData.username,
+            password: data.tempPassword,
+            name: formData.name,
+          });
+        }
       }
 
       closeForm();
@@ -154,15 +173,92 @@ const openEditForm = (driver) => {
   };
 
   const handleDelete = async () => {
-  if (!driverToDelete) return;
+    if (!driverToDelete) return;
+
+    try {
+      setError("");
+
+      const response = await fetch(
+        `http://localhost:5000/api/drivers/${driverToDelete.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to delete driver"
+        );
+      }
+
+      setDrivers((prev) =>
+        prev.filter(
+          (item) => item.id !== driverToDelete.id
+        )
+      );
+
+      setDriverToDelete(null);
+
+    } catch (error) {
+      console.error("Delete driver error:", error);
+      setError(error.message);
+      setDriverToDelete(null);
+    }
+  };
+
+  const handleCopyCredentials = () => {
+    if (!tempPasswordInfo) return;
+
+    const text = `Username: ${tempPasswordInfo.username}\nTemporary Password: ${tempPasswordInfo.password}`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
+
+  const normalizedSearch = searchQuery
+    .trim()
+    .toLowerCase();
+
+  const displayedDrivers = drivers.filter((driver) => {
+    // Alert filter
+    const matchesAlertFilter =
+      !filteredDriverIds ||
+      filteredDriverIds.includes(driver.id);
+
+    // Search filter
+    const matchesSearch =
+      !normalizedSearch ||
+      [
+        driver.name,
+        driver.phone,
+        driver.status,
+        driver.vehicles?.[0]?.registration_number,
+        driver.vehicles?.[0]?.model,
+      ].some((field) =>
+        String(field || "")
+          .toLowerCase()
+          .includes(normalizedSearch)
+      );
+
+    return matchesAlertFilter && matchesSearch;
+  });
+const handleResetPassword = async () => {
+  if (!driverToReset) return;
 
   try {
     setError("");
 
     const response = await fetch(
-      `http://localhost:5000/api/drivers/${driverToDelete.id}`,
+      `http://localhost:5000/api/drivers/${driverToReset.id}/reset-password`,
       {
-        method: "DELETE",
+        method: "POST",
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
         },
@@ -173,51 +269,28 @@ const openEditForm = (driver) => {
 
     if (!response.ok) {
       throw new Error(
-        data.message || "Failed to delete driver"
+        data.message || "Failed to reset driver password"
       );
     }
 
-    setDrivers((prev) =>
-      prev.filter(
-        (item) => item.id !== driverToDelete.id
-      )
-    );
+    setTempPasswordInfo({
+      username: driverToReset.username,
+      password: data.tempPassword,
+      name: driverToReset.name,
+    });
 
-    setDriverToDelete(null);
+    setDriverToReset(null);
 
   } catch (error) {
-    console.error("Delete driver error:", error);
-    setError(error.message);
-    setDriverToDelete(null);
-  }
-};
-const normalizedSearch = searchQuery
-  .trim()
-  .toLowerCase();
+    console.error("Reset password error:", error);
 
-const displayedDrivers = drivers.filter((driver) => {
-  // Alert filter
-  const matchesAlertFilter =
-    !filteredDriverIds ||
-    filteredDriverIds.includes(driver.id);
-
-  // Search filter
-  const matchesSearch =
-    !normalizedSearch ||
-    [
-      driver.name,
-      driver.phone,
-      driver.status,
-      driver.vehicles?.[0]?.registration_number,
-      driver.vehicles?.[0]?.model,
-    ].some((field) =>
-      String(field || "")
-        .toLowerCase()
-        .includes(normalizedSearch)
+    setError(
+      error.message || "Failed to reset the password."
     );
 
-  return matchesAlertFilter && matchesSearch;
-});
+    setDriverToReset(null);
+  }
+};
   return (
     <div className="drivers-page">
 
@@ -268,20 +341,20 @@ const displayedDrivers = drivers.filter((driver) => {
 
           <form onSubmit={handleSubmit}>
 
-           {!editingDriver && (
-  <div className="drivers-form-group">
-    <label>Email</label>
+            {!editingDriver && (
+              <div className="drivers-form-group">
+                <label>Username</label>
 
-    <input
-      type="email"
-      name="email"
-      value={formData.email}
-      onChange={handleChange}
-      placeholder="Enter driver's email"
-      required
-    />
-  </div>
-)}
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="e.g. driver phone number or employee ID"
+                  required
+                />
+              </div>
+            )}
 
             <div className="drivers-form-row">
 
@@ -357,22 +430,22 @@ const displayedDrivers = drivers.filter((driver) => {
           <div className="drivers-loading">
             Loading drivers...
           </div>
-       ) : displayedDrivers.length === 0 ? (
-         <div className="drivers-empty">
-    <UserRound size={40} />
+        ) : displayedDrivers.length === 0 ? (
+          <div className="drivers-empty">
+            <UserRound size={40} />
 
-    <h3>
-      {searchQuery.trim()
-        ? "No matching drivers found"
-        : "No drivers found"}
-    </h3>
+            <h3>
+              {searchQuery.trim()
+                ? "No matching drivers found"
+                : "No drivers found"}
+            </h3>
 
-    <p>
-      {searchQuery.trim()
-        ? `No drivers match "${searchQuery}".`
-        : "Add your first driver to get started."}
-    </p>
-  </div>
+            <p>
+              {searchQuery.trim()
+                ? `No drivers match "${searchQuery}".`
+                : "Add your first driver to get started."}
+            </p>
+          </div>
         ) : (
           <div className="drivers-table-wrapper">
 
@@ -429,27 +502,37 @@ const displayedDrivers = drivers.filter((driver) => {
                     </td>
 
                     <td>
-                      <div className="driver-actions">
+                     <div className="driver-actions">
 
-                        <button
-                          className="driver-edit-btn"
-                          onClick={() =>
-                            openEditForm(driver)
-                          }
-                          title="Edit driver"
-                        >
-                          <Pencil size={17} />
-                        </button>
+  {/* Reset Password */}
+  <button
+    className="driver-reset-btn"
+     onClick={() => setDriverToReset(driver)}
+    title="Reset password"
+    disabled={resettingPassword === driver.id}
+  >
+    <KeyRound size={17} />
+  </button>
 
-                       <button
-  className="driver-delete-btn"
-  onClick={() => setDriverToDelete(driver)}
-  title="Delete driver"
->
-  <Trash2 size={17} />
-</button>
+  {/* Edit */}
+  <button
+    className="driver-edit-btn"
+    onClick={() => openEditForm(driver)}
+    title="Edit driver"
+  >
+    <Pencil size={17} />
+  </button>
 
-                      </div>
+  {/* Delete */}
+  <button
+    className="driver-delete-btn"
+    onClick={() => setDriverToDelete(driver)}
+    title="Delete driver"
+  >
+    <Trash2 size={17} />
+  </button>
+
+</div>
                     </td>
 
                   </tr>
@@ -462,37 +545,156 @@ const displayedDrivers = drivers.filter((driver) => {
         )}
 
       </div>
-{driverToDelete && (
+
+      {driverToDelete && (
+        <div className="delete-modal-overlay">
+
+          <div className="delete-modal">
+
+            <div className="delete-modal-icon">
+              <Trash2 size={24} />
+            </div>
+
+            <h2>Delete Driver?</h2>
+
+            <p>
+              Are you sure you want to delete{" "}
+              <strong>{driverToDelete.name}</strong>?
+              This action cannot be undone.
+            </p>
+
+            <div className="delete-modal-actions">
+
+              <button
+                className="delete-modal-cancel"
+                onClick={() => setDriverToDelete(null)}
+              >
+                Cancel
+              </button>
+
+              <button
+                className="delete-modal-confirm"
+                onClick={handleDelete}
+              >
+                Delete Driver
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
+      {tempPasswordInfo && (
+        <div className="delete-modal-overlay">
+
+          <div className="delete-modal">
+
+            <h2>
+  {tempPasswordInfo.isReset
+    ? "Driver Password Reset"
+    : "Driver Account Created"}
+</h2>
+
+          <p>
+  {tempPasswordInfo.isReset ? (
+    <>
+      A new temporary password has been generated for{" "}
+      <strong>{tempPasswordInfo.name}</strong>.
+      Share these credentials directly with the driver.
+      The driver will be required to create a new password
+      after logging in.
+    </>
+  ) : (
+    <>
+      Share these credentials with{" "}
+      <strong>{tempPasswordInfo.name}</strong> directly
+      (in person, SMS, or WhatsApp). This password will
+      only be shown once.
+    </>
+  )}
+</p>
+            <div
+              style={{
+                background: "#f5f5f5",
+                borderRadius: "8px",
+                padding: "12px 16px",
+                margin: "16px 0",
+                fontFamily: "monospace",
+                fontSize: "14px",
+                textAlign: "left",
+              }}
+            >
+              <div>Username: {tempPasswordInfo.username}</div>
+              <div>Password: {tempPasswordInfo.password}</div>
+            </div>
+
+            <div className="delete-modal-actions">
+
+              <button
+                className="drivers-cancel-btn"
+                onClick={handleCopyCredentials}
+              >
+                {copied ? (
+                  <>
+                    <Check size={16} /> Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy size={16} /> Copy
+                  </>
+                )}
+              </button>
+
+              <button
+                className="delete-modal-confirm"
+                onClick={() => setTempPasswordInfo(null)}
+              >
+                Done
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
+{driverToReset && (
   <div className="delete-modal-overlay">
 
     <div className="delete-modal">
 
       <div className="delete-modal-icon">
-        <Trash2 size={24} />
+        <KeyRound size={24} />
       </div>
 
-      <h2>Delete Driver?</h2>
+      <h2>Reset Driver Password?</h2>
 
       <p>
-        Are you sure you want to delete{" "}
-        <strong>{driverToDelete.name}</strong>?
-        This action cannot be undone.
+        Are you sure you want to reset the password for{" "}
+        <strong>{driverToReset.name}</strong>?
+      </p>
+
+      <p>
+        A new temporary password will be generated. The driver
+        will be required to create a new password after logging in.
       </p>
 
       <div className="delete-modal-actions">
 
         <button
           className="delete-modal-cancel"
-          onClick={() => setDriverToDelete(null)}
+          onClick={() => setDriverToReset(null)}
         >
           Cancel
         </button>
 
         <button
           className="delete-modal-confirm"
-          onClick={handleDelete}
+          onClick={handleResetPassword}
         >
-          Delete Driver
+          Reset Password
         </button>
 
       </div>

@@ -24,44 +24,53 @@ export function AuthProvider({ children }) {
     setProfile(data);
   };
 
-  useEffect(() => {
-    const initializeAuth = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      setSession(session);
-
-      if (session?.user) {
-        await fetchProfile(session.user.id);
-      }
-
-      setLoading(false);
-    };
-
-    initializeAuth();
-
+useEffect(() => {
+  const initializeAuth = async () => {
     const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setSession(session);
+      data: { session },
+    } = await supabase.auth.getSession();
 
-      if (session?.user) {
-        await fetchProfile(session.user.id);
-      } else {
-        setProfile(null);
-      }
-    });
+    setSession(session);
 
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
+    if (session?.user) {
+      await fetchProfile(session.user.id);
+    } else {
+      setProfile(null);
+    }
+
+    setLoading(false);
+  };
+
+  initializeAuth();
+
+  const {
+    data: { subscription },
+  } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    setSession(session);
+
+    if (session?.user) {
+      await fetchProfile(session.user.id);
+    } else {
+      setProfile(null);
+    }
+
+    setLoading(false);
+  });
+
+  return () => {
+    subscription.unsubscribe();
+  };
+}, []);
 
   const logout = async () => {
     await supabase.auth.signOut();
     setProfile(null);
   };
+
+  // True whenever the logged-in user still needs to change
+  // a temporary password (set at account creation or reset).
+  const mustResetPassword =
+    session?.user?.user_metadata?.must_reset_password === true;
 
   const value = {
     session,
@@ -69,6 +78,7 @@ export function AuthProvider({ children }) {
     profile,
     loading,
     logout,
+    mustResetPassword,
   };
 
   return (

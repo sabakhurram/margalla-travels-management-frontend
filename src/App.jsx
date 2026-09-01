@@ -10,7 +10,8 @@ import { useAuth } from "./context/AuthContext";
 import DriverDashboard from "./pages/DriverDashboard/DriverDashboard";
 import RoleProtectedRoute from "./components/auth/RoleProtectedRoute";
 import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
-import SetPassword from "./pages/SetPassword/SetPassword";
+   import SetPassword from "./pages/SetPassword/SetNewPassword";
+   import PasswordResetGuard from "./components/auth/PasswordResetGuard";
 function Dashboard() {
   const { user, profile, loading } = useAuth();
     const { logout } = useAuth();
@@ -39,6 +40,7 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+          <PasswordResetGuard>
         <Routes>
           <Route path="/" element={<Welcome />} />
           <Route path="/login" element={<Login />} />
@@ -68,6 +70,7 @@ function App() {
             element={<Navigate to="/login" replace />}
           />
         </Routes>
+        </PasswordResetGuard>
       </AuthProvider>
     </BrowserRouter>
   );

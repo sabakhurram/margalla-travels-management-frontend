@@ -1,3 +1,4 @@
+
 /* =========================
    RESET
 ========================= */
@@ -25,8 +26,8 @@ body,
   min-height: 100vh;
 
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 
   padding: 40px 20px;
 
@@ -36,28 +37,15 @@ body,
       rgba(18, 164, 181, 0.08),
       transparent 25%
     ),
+    radial-gradient(
+      circle at 90% 50%,
+      rgba(18, 164, 181, 0.06),
+      transparent 25%
+    ),
     #f7fafa;
 
   position: relative;
   overflow: hidden;
-}
-
-
-/* Decorative teal circles */
-
-
-.login-page::before {
-  left: -28px;
-  top: 50%;
-
-  transform: translateY(-50%);
-}
-
-.login-page::after {
-  right: -28px;
-  top: 50%;
-
-  transform: translateY(-50%);
 }
 
 
@@ -91,7 +79,6 @@ body,
 .login-logo {
   width: 270px;
   max-width: 75%;
-
   height: auto;
 
   display: block;
@@ -103,7 +90,7 @@ body,
 
 
 /* =========================
-   WELCOME HEADING
+   HEADING
 ========================= */
 
 .login-card h1 {
@@ -111,15 +98,10 @@ body,
 
   color: #172b35;
 
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 
   font-size: 29px;
-
   font-weight: 600;
-
   line-height: 1.25;
 
   text-align: center;
@@ -135,22 +117,15 @@ body,
 
   color: #87979e;
 
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 
   font-size: 14px;
-
   line-height: 1.5;
 
   text-align: center;
 }
 
 
-/* =========================
-   INPUT GROUP
-========================= */
 /* =========================
    INPUT GROUP
 ========================= */
@@ -162,7 +137,7 @@ body,
 
 
 /* =========================
-   INPUT BOX
+   INPUT WRAPPER
 ========================= */
 
 .input-wrapper {
@@ -184,6 +159,7 @@ body,
     box-shadow 0.2s ease;
 }
 
+
 .input-wrapper:focus-within {
   border-color: #11a3b5;
 
@@ -193,7 +169,7 @@ body,
 
 
 /* =========================
-   LEFT ICON
+   INPUT ICON
 ========================= */
 
 .input-icon {
@@ -211,20 +187,20 @@ body,
 
 .input-content {
   flex: 1;
-
   min-width: 0;
   height: 100%;
 
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: flex-start;
 
   padding: 8px 10px 7px 14px;
-
-  text-align: left;
 }
-/* Label INSIDE box */
+
+
+/* =========================
+   INPUT LABEL
+========================= */
 
 .input-content label {
   display: block;
@@ -245,10 +221,13 @@ body,
   text-align: left;
 }
 
-/* Input */
+
+/* =========================
+   INPUT
+========================= */
+
 .input-content input {
   width: 100%;
-
   height: 22px;
 
   padding: 0;
@@ -267,51 +246,9 @@ body,
   text-align: left;
 }
 
-/* Placeholder */
 
 .input-content input::placeholder {
   color: #b2bdc1;
-
-  opacity: 1;
-}
-
-
-/* =========================
-   PASSWORD EYE
-========================= */
-
-.password-toggle {
-  width: 42px;
-  height: 42px;
-
-  margin-right: 8px;
-
-  padding: 0;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border: none;
-
-  background: transparent;
-
-  color: #82949b;
-
-  cursor: pointer;
-
-  flex-shrink: 0;
-}
-
-.password-toggle:hover {
-  color: #0ca3b5;
-}
-
-/* Placeholder */
-
-.input-wrapper input::placeholder {
-  color: #b2bdc1;
-
   opacity: 1;
 }
 
@@ -325,7 +262,6 @@ body,
   height: 42px;
 
   margin-right: 8px;
-
   padding: 0;
 
   display: flex;
@@ -341,7 +277,10 @@ body,
   cursor: pointer;
 
   flex-shrink: 0;
+
+  transition: color 0.2s ease;
 }
+
 
 .password-toggle:hover {
   color: #0ca3b5;
@@ -349,7 +288,7 @@ body,
 
 
 /* =========================
-   ERROR
+   ERROR MESSAGE
 ========================= */
 
 .login-error {
@@ -357,14 +296,12 @@ body,
 
   color: #d95353;
 
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 
   font-size: 12px;
-
   line-height: 1.5;
+
+  text-align: left;
 }
 
 
@@ -373,6 +310,8 @@ body,
 ========================= */
 
 .login-options {
+  width: 100%;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -383,7 +322,9 @@ body,
 }
 
 
-/* Remember */
+/* =========================
+   REMEMBER ME
+========================= */
 
 .remember-me {
   display: flex;
@@ -393,18 +334,19 @@ body,
 
   color: #40545d;
 
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 
   font-size: 13px;
 
   cursor: pointer;
+
+  white-space: nowrap;
 }
 
 
-/* Checkbox */
+/* =========================
+   CUSTOM CHECKBOX
+========================= */
 
 .remember-me input {
   appearance: none;
@@ -415,7 +357,6 @@ body,
   margin: 0;
 
   border: 2px solid #b8dce1;
-
   border-radius: 4px;
 
   background: #ffffff;
@@ -423,16 +364,20 @@ body,
   cursor: pointer;
 
   position: relative;
+
+  flex-shrink: 0;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
-
-/* Checked */
 
 .remember-me input:checked {
   background: #0ca3b5;
-
   border-color: #0ca3b5;
 }
+
 
 .remember-me input:checked::after {
   content: "✓";
@@ -444,37 +389,28 @@ body,
 
   transform: translate(-50%, -53%);
 
-  color: white;
+  color: #ffffff;
 
   font-size: 12px;
+  font-weight: bold;
 }
 
 
-/* Forgot password */
+/* =========================
+   FORGOT PASSWORD NOTE
+========================= */
 
-.forgot-password {
-  padding: 0;
-
-  border: none;
-
-  background: transparent;
-
+.forgot-password-note {
   color: #0ca3b5;
 
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 
   font-size: 13px;
+  font-weight: 500;
 
-  font-weight: 600;
+  line-height: 1.4;
 
-  cursor: pointer;
-}
-
-.forgot-password:hover {
-  color: #087f8e;
+  text-align: right;
 }
 
 
@@ -493,20 +429,15 @@ body,
   gap: 10px;
 
   border: none;
-
   border-radius: 10px;
 
   background: #0ca3b5;
 
   color: #ffffff;
 
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 
   font-size: 14px;
-
   font-weight: 600;
 
   cursor: pointer;
@@ -535,7 +466,6 @@ body,
 
 .login-button:disabled {
   opacity: 0.65;
-
   cursor: not-allowed;
 }
 
@@ -550,22 +480,26 @@ body,
     padding: 35px 20px;
   }
 
+
   .login-card {
     max-width: 500px;
 
     padding: 32px 45px 40px;
   }
 
+
   .login-logo {
     width: 245px;
   }
+
 
   .login-card h1 {
     font-size: 27px;
   }
 
+
   .input-wrapper {
-    height: 62px;
+    height: 64px;
   }
 }
 
@@ -580,19 +514,6 @@ body,
     padding: 20px 14px;
   }
 
-  .login-page::before,
-  .login-page::after {
-    width: 42px;
-    height: 42px;
-  }
-
-  .login-page::before {
-    left: -22px;
-  }
-
-  .login-page::after {
-    right: -22px;
-  }
 
   .login-card {
     width: 100%;
@@ -602,6 +523,7 @@ body,
     border-radius: 16px;
   }
 
+
   .login-logo {
     width: 220px;
     max-width: 85%;
@@ -609,9 +531,11 @@ body,
     margin-bottom: 15px;
   }
 
+
   .login-card h1 {
     font-size: 24px;
   }
+
 
   .login-subtitle {
     margin-top: 8px;
@@ -620,46 +544,75 @@ body,
     font-size: 12px;
   }
 
+
   .input-group {
     margin-bottom: 15px;
   }
 
-  .input-group label {
-    font-size: 12px;
-  }
 
   .input-wrapper {
-    height: 56px;
+    height: 62px;
 
     border-radius: 9px;
   }
+
 
   .input-icon {
     margin-left: 15px;
   }
 
-  .input-wrapper input {
-    font-size: 13px;
 
-    padding: 0 12px;
+  .input-content {
+    padding-left: 11px;
   }
 
+
+  .input-content label {
+    font-size: 12px;
+  }
+
+
+  .input-content input {
+    font-size: 12px;
+  }
+
+
+  .password-toggle {
+    margin-right: 5px;
+  }
+
+
+  /* Login Options */
+
   .login-options {
+    align-items: flex-start;
+
     margin-top: 18px;
     margin-bottom: 22px;
 
     gap: 10px;
   }
 
-  .remember-me,
-  .forgot-password {
+
+  .remember-me {
     font-size: 11px;
   }
+
+
+  .forgot-password-note {
+    font-size: 11px;
+
+    max-width: 190px;
+
+    text-align: right;
+  }
+
 
   .remember-me input {
     width: 17px;
     height: 17px;
   }
+
 
   .login-button {
     height: 49px;
@@ -679,68 +632,67 @@ body,
     padding: 15px 10px;
   }
 
+
   .login-card {
     padding: 25px 18px 28px;
   }
+
 
   .login-logo {
     width: 195px;
   }
 
+
   .login-card h1 {
     font-size: 22px;
   }
+
 
   .login-subtitle {
     font-size: 11px;
   }
 
+
   .input-wrapper {
-    height: 52px;
+    height: 58px;
   }
+
+
+  /* Stack options for very small screens */
 
   .login-options {
     flex-direction: column;
+
     align-items: flex-start;
 
     margin-top: 16px;
   }
 
-  .forgot-password {
-    align-self: flex-end;
+
+  .forgot-password-note {
+    width: 100%;
+
+    max-width: none;
+
+    text-align: left;
   }
 }
-@media (max-width: 480px) {
 
-  .input-wrapper {
-    height: 62px;
 
-    border-radius: 9px;
-  }
+/* =========================
+   SUCCESS MESSAGE
+========================= */
 
-  .input-icon {
-    margin-left: 15px;
-  }
-
-  .input-content {
-    padding-left: 11px;
-  }
-
-  .input-content label {
-    font-size: 11px;
-  }
-
-  .input-content input {
-    font-size: 12px;
-  }
-
-  .password-toggle {
-    margin-right: 5px;
-  }
-}
 .login-success {
-  color: #0797a8;
-  font-size: 14px;
   margin: 10px 0;
+
+  color: #0797a8;
+
+  font-family: Arial, Helvetica, sans-serif;
+
+  font-size: 14px;
   line-height: 1.5;
+
+  text-align: center;
 }
+

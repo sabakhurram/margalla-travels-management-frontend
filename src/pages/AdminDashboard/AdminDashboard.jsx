@@ -12,6 +12,7 @@ import Drivers from "./Drivers/Drivers";
 import Mileage from "./Mileage/Mileage";
 import Reports from "./Reports/Reports";
 import AuditLogs from "./AuditLogs/AuditLogs";
+import Admins from "./Admin/Admin";
 import {
   CarFront,
   Users,
@@ -309,6 +310,9 @@ const filteredAlerts = (
     filteredDriverIds={filteredDriverIds}
     searchQuery={searchQuery}
   />
+)}
+{activeTab === "admins" && (
+  <Admins searchQuery={searchQuery} />
 )}
 {activeTab === "mileage" && (
   <Mileage

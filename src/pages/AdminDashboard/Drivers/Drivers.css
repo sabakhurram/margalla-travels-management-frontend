@@ -1053,3 +1053,21 @@
     width: 100%;
   }
 }
+.driver-reset-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 34px;
+  height: 34px;
+
+  border: none;
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.driver-reset-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
