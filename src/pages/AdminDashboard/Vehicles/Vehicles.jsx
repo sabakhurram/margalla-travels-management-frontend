@@ -647,7 +647,7 @@ const handleDeleteVehicle = async () => {
               {
                 vehicles.filter(
                   (vehicle) =>
-                    vehicle.status?.toLowerCase() === "active"
+                    vehicle.status?.toLowerCase() === "inactive"
                 ).length
               }
             </strong>
