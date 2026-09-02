@@ -121,11 +121,6 @@ function DriverDashboard() {
 
       const data = await response.json();
 
-      console.log(
-        "Driver dashboard data:",
-        data
-      );
-
       /*
       --------------------------------------------
       Mileage history
@@ -144,10 +139,7 @@ function DriverDashboard() {
       const historyData =
         await historyResponse.json();
 
-      console.log(
-        "Driver mileage history:",
-        historyData
-      );
+    
 
       const history =
         historyData.mileage || [];
@@ -260,6 +252,21 @@ function DriverDashboard() {
 
       return;
     }
+    /*
+--------------------------------------------
+Vehicle status validation
+--------------------------------------------
+*/
+
+if (vehicle.status !== "active") {
+  setMileageError(
+    vehicle.status === "maintenance"
+      ? "Mileage submission is unavailable because your vehicle is under maintenance."
+      : "Mileage submission is unavailable because your assigned vehicle is inactive."
+  );
+
+  return;
+}
 
     /*
     --------------------------------------------
@@ -338,11 +345,6 @@ function DriverDashboard() {
 
       const result =
         await response.json();
-
-      console.log(
-        "Mileage submission response:",
-        result
-      );
 
       /*
       --------------------------------------------
@@ -848,7 +850,23 @@ function DriverDashboard() {
 
 
           <div className="mileage-form">
+{vehicle && vehicle.status !== "active" && (
+  <div className="mileage-form-error">
+    <AlertCircle size={18} />
 
+    <div>
+      <strong>
+        Mileage submission unavailable
+      </strong>
+
+      <p>
+        {vehicle.status === "maintenance"
+          ? "Your assigned vehicle is currently under maintenance. You cannot submit mileage until it becomes active."
+          : "Your assigned vehicle is currently inactive. You cannot submit mileage until it becomes active."}
+      </p>
+    </div>
+  </div>
+)}
             {/* ==================================================
                 MILEAGE ERROR
             ================================================== */}
@@ -1023,12 +1041,13 @@ function DriverDashboard() {
               <button
                 type="button"
                 className="mileage-submit-btn"
-                disabled={
-                  !vehicle ||
-                  submittingMileage ||
-                  startingMileage === "" ||
-                  endingMileage === ""
-                }
+             disabled={
+  !vehicle ||
+  vehicle.status !== "active" ||
+  submittingMileage ||
+  startingMileage === "" ||
+  endingMileage === ""
+}
                 onClick={
                   handleMileageSubmit
                 }

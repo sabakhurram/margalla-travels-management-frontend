@@ -25,6 +25,7 @@ const [editCategoryName, setEditCategoryName] = useState("");
 const [updating, setUpdating] = useState(false);
 const [deletingCategory, setDeletingCategory] = useState(null);
 const [deleting, setDeleting] = useState(false);
+const [deleteError, setDeleteError] = useState("");
 const [monthlyLimits, setMonthlyLimits] = useState({});
 const [monthlyLimitCategory, setMonthlyLimitCategory] = useState(null);
 const [monthlyLimit, setMonthlyLimit] = useState("");
@@ -46,7 +47,7 @@ const [savingMonthlyLimit, setSavingMonthlyLimit] = useState(false);
 
       const data = await response.json();
 
-      console.log("GET Categories response:", data);
+      
 
       if (!response.ok) {
         throw new Error(
@@ -92,9 +93,6 @@ const handleUpdateCategory = async (e) => {
     );
 
     const data = await response.json();
-
-    console.log("Update category response:", data);
-
     if (!response.ok) {
       throw new Error(
         data.message || "Failed to update category"
@@ -118,7 +116,7 @@ const handleDelete = async () => {
 
   try {
     setDeleting(true);
-    setError("");
+    setDeleteError("");
 
     const response = await fetch(
       `http://localhost:5000/api/categories/${deletingCategory.id}`,
@@ -131,8 +129,6 @@ const handleDelete = async () => {
     );
 
     const data = await response.json();
-
-    console.log("Delete category response:", data);
 
     if (!response.ok) {
       throw new Error(
@@ -147,10 +143,15 @@ const handleDelete = async () => {
     );
 
     setDeletingCategory(null);
+    setDeleteError("");
 
   } catch (error) {
     console.error("Delete category error:", error);
-    setError(error.message);
+
+    setDeleteError(
+      error.message || "Failed to delete category"
+    );
+
   } finally {
     setDeleting(false);
   }
@@ -228,7 +229,6 @@ const handleSaveMonthlyLimit = async (e) => {
 
     const data = await response.json();
 
-    console.log("Save monthly limit response:", data);
 
     if (!response.ok) {
       throw new Error(
@@ -285,9 +285,6 @@ const handleSaveMonthlyLimit = async (e) => {
       );
 
       const data = await response.json();
-
-      console.log("POST Category response:", data);
-
       if (!response.ok) {
         throw new Error(
           data.message || "Failed to create category"
@@ -532,7 +529,10 @@ const handleSaveMonthlyLimit = async (e) => {
 
   <button
     className="category-delete-button"
-    onClick={() => setDeletingCategory(category)}
+  onClick={() => {
+  setDeleteError("");
+  setDeletingCategory(category);
+}}
     aria-label={`Delete ${category.name}`}
     title="Delete category"
   >
@@ -604,35 +604,69 @@ const handleSaveMonthlyLimit = async (e) => {
 
       <div className="delete-modal-content">
 
-        <h3>Delete Category?</h3>
+        <h3>
+          {deleteError
+            ? "Cannot Delete Category"
+            : "Delete Category?"}
+        </h3>
 
-        <p>
-          Are you sure you want to delete{" "}
-          <strong>{deletingCategory.name}</strong>?
-          This action cannot be undone.
-        </p>
+        {deleteError ? (
+          <p className="delete-modal-error">
+            {deleteError}
+          </p>
+        ) : (
+          <p>
+            Are you sure you want to delete{" "}
+            <strong>{deletingCategory.name}</strong>?
+            This action cannot be undone.
+          </p>
+        )}
 
       </div>
 
       <div className="delete-modal-actions">
 
-        <button
-          type="button"
-          className="delete-modal-cancel"
-          onClick={() => setDeletingCategory(null)}
-          disabled={deleting}
-        >
-          Cancel
-        </button>
+        {deleteError ? (
 
-        <button
-          type="button"
-          className="delete-modal-confirm"
-          onClick={handleDelete}
-          disabled={deleting}
-        >
-          {deleting ? "Deleting..." : "Delete Category"}
-        </button>
+          <button
+            type="button"
+            className="delete-modal-confirm"
+            onClick={() => {
+              setDeleteError("");
+              setDeletingCategory(null);
+            }}
+          >
+            OK
+          </button>
+
+        ) : (
+
+          <>
+            <button
+              type="button"
+              className="delete-modal-cancel"
+              onClick={() => {
+                setDeleteError("");
+                setDeletingCategory(null);
+              }}
+              disabled={deleting}
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              className="delete-modal-confirm"
+              onClick={handleDelete}
+              disabled={deleting}
+            >
+              {deleting
+                ? "Deleting..."
+                : "Delete Category"}
+            </button>
+          </>
+
+        )}
 
       </div>
 

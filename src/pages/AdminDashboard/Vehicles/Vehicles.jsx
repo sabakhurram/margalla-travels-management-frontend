@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import {
   Plus,
@@ -25,9 +25,10 @@ const [showForm, setShowForm] = useState(false);
 const [submitting, setSubmitting] = useState(false);
 const [editingVehicle, setEditingVehicle] = useState(null);
 const [updating, setUpdating] = useState(false);
+const vehicleFormRef = useRef(null);
 const [deleting, setDeleting] = useState(false);
 const [vehicleToDelete, setVehicleToDelete] = useState(null);
-
+const [deleteError, setDeleteError] = useState("");
 const [vehicleForm, setVehicleForm] = useState({
   registration_number: "",
   model: "",
@@ -123,7 +124,7 @@ const fetchDrivers = async () => {
 
       const data = await response.json();
 
-      console.log("GET Vehicles response:", data);
+     
 
       if (!response.ok) {
         throw new Error(
@@ -199,7 +200,7 @@ const handleAddVehicle = async (e) => {
 
     const data = await response.json();
 
-    console.log("POST Vehicle response:", data);
+   
 
     if (!response.ok) {
       throw new Error(
@@ -225,8 +226,8 @@ resetVehicleForm();
       case "available":
         return "status-available";
 
-      case "assigned":
-        return "status-assigned";
+      case "active":
+        return "status-active";
 
       case "maintenance":
         return "status-maintenance";
@@ -282,7 +283,6 @@ const handleUpdateVehicle = async (e) => {
 
     const data = await response.json();
 
-    console.log("PATCH Vehicle response:", data);
 
     if (!response.ok) {
       throw new Error(
@@ -314,6 +314,13 @@ const handleEditVehicle = (vehicle) => {
   });
 
   setShowForm(true);
+
+  setTimeout(() => {
+    vehicleFormRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, 100);
 };
 const resetVehicleForm = () => {
   setShowForm(false);
@@ -333,7 +340,7 @@ const handleDeleteVehicle = async () => {
 
   try {
     setDeleting(true);
-    setError("");
+    setDeleteError("");
 
     const response = await fetch(
       `http://localhost:5000/api/vehicles/${vehicleToDelete.id}`,
@@ -347,7 +354,7 @@ const handleDeleteVehicle = async () => {
 
     const data = await response.json();
 
-    console.log("DELETE Vehicle response:", data);
+    
 
     if (!response.ok) {
       throw new Error(
@@ -355,7 +362,6 @@ const handleDeleteVehicle = async () => {
       );
     }
 
-    // Remove the vehicle from the table immediately
     setVehicles((prevVehicles) =>
       prevVehicles.filter(
         (vehicle) => vehicle.id !== vehicleToDelete.id
@@ -363,10 +369,15 @@ const handleDeleteVehicle = async () => {
     );
 
     setVehicleToDelete(null);
+    setDeleteError("");
 
   } catch (error) {
     console.error("Delete vehicle error:", error);
-    setError(error.message || "Failed to delete vehicle");
+
+    setDeleteError(
+      error.message || "Failed to delete vehicle"
+    );
+
   } finally {
     setDeleting(false);
   }
@@ -404,7 +415,10 @@ const handleDeleteVehicle = async () => {
 
       </div>
 {showForm && (
-  <div className="vehicle-form-card">
+  <div
+    className="vehicle-form-card"
+    ref={vehicleFormRef}
+  >
 
     <div className="vehicle-form-header">
       <div>
@@ -615,7 +629,7 @@ const handleDeleteVehicle = async () => {
               {
                 vehicles.filter(
                   (vehicle) =>
-                    vehicle.status?.toLowerCase() === "assigned"
+                    vehicle.status?.toLowerCase() === "active"
                 ).length
               }
             </strong>
@@ -633,7 +647,7 @@ const handleDeleteVehicle = async () => {
               {
                 vehicles.filter(
                   (vehicle) =>
-                    vehicle.status?.toLowerCase() === "assigned"
+                    vehicle.status?.toLowerCase() === "active"
                 ).length
               }
             </strong>
@@ -873,7 +887,10 @@ const handleDeleteVehicle = async () => {
      <button
     type="button"
     className="vehicle-action-button delete"
-    onClick={() => setVehicleToDelete(vehicle)}
+  onClick={() => {
+  setError("");
+  setVehicleToDelete(vehicle);
+}}
     title="Delete vehicle"
   >
     <Trash2 size={16} />
@@ -902,41 +919,81 @@ const handleDeleteVehicle = async () => {
 
       <div className="delete-modal-content">
 
-        <h3>Delete Vehicle?</h3>
+        <h3>
+          {deleteError
+            ? "Cannot Delete Vehicle"
+            : "Delete Vehicle?"}
+        </h3>
 
-        <p>
-          Are you sure you want to delete{" "}
-          <strong>
-            {vehicleToDelete.registration_number}
-          </strong>
-          ?
-        </p>
+        {deleteError ? (
 
-        <span>
-          This action cannot be undone.
-        </span>
+          <p className="delete-modal-error">
+            {deleteError}
+          </p>
+
+        ) : (
+
+          <>
+            <p>
+              Are you sure you want to delete{" "}
+              <strong>
+                {vehicleToDelete.registration_number}
+              </strong>
+              ?
+            </p>
+
+            <span>
+              This action cannot be undone.
+            </span>
+          </>
+
+        )}
 
       </div>
 
       <div className="delete-modal-actions">
 
-        <button
-          type="button"
-          className="delete-modal-cancel"
-          onClick={() => setVehicleToDelete(null)}
-          disabled={deleting}
-        >
-          Cancel
-        </button>
+        {deleteError ? (
 
-        <button
-          type="button"
-          className="delete-modal-confirm"
-          onClick={handleDeleteVehicle}
-          disabled={deleting}
-        >
-          {deleting ? "Deleting..." : "Delete Vehicle"}
-        </button>
+          <button
+            type="button"
+            className="delete-modal-confirm"
+            onClick={() => {
+              setDeleteError("");
+              setVehicleToDelete(null);
+            }}
+          >
+            OK
+          </button>
+
+        ) : (
+
+          <>
+            <button
+              type="button"
+              className="delete-modal-cancel"
+              onClick={() => {
+                setDeleteError("");
+                setVehicleToDelete(null);
+              }}
+              disabled={deleting}
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              className="delete-modal-confirm"
+              onClick={handleDeleteVehicle}
+              disabled={deleting}
+            >
+              {deleting
+                ? "Deleting..."
+                : "Delete Vehicle"}
+            </button>
+          </>
+
+        )}
 
       </div>
 

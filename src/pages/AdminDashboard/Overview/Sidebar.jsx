@@ -25,7 +25,7 @@ function Sidebar({
   setActiveTab,
 }) {
   const { logout } = useAuth();
-
+const { profile } = useAuth();
   const navigationItems = [
     {
       label: "Dashboard",
@@ -139,19 +139,32 @@ function Sidebar({
        {/* Bottom section */}
 <div className="sidebar-bottom">
 
-  {/* Admin Profile */}
-  <div className="sidebar-user">
+ <div className="sidebar-user">
 
     <div className="sidebar-user-avatar">
-      <span>A</span>
+      <span>
+        {profile?.name?.charAt(0)?.toUpperCase() ||
+          profile?.username?.charAt(0)?.toUpperCase() ||
+          "A"}
+      </span>
     </div>
 
     <div className="sidebar-user-info">
-      <strong>Admin</strong>
-      <span>Administrator</span>
-    </div>
 
-  </div>
+      <strong>
+        {profile?.name ||
+          profile?.username ||
+          "Admin"}
+      </strong>
+
+      <span>
+        {profile?.role === "admin"
+          ? "Administrator"
+          : profile?.role || "User"}
+      </span>
+
+    </div>
+    </div>
 
 
   {/* Sign Out */}
