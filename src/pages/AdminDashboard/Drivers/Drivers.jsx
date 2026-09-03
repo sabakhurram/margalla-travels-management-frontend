@@ -43,7 +43,7 @@ const [resettingPassword, setResettingPassword] =
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/api/drivers",
+        "https://api.margallatravels.com.pk/api/drivers",
         {
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
@@ -122,8 +122,8 @@ const [resettingPassword, setResettingPassword] =
       setError("");
 
       const url = editingDriver
-        ? `http://localhost:5000/api/drivers/${editingDriver.id}`
-        : "http://localhost:5000/api/drivers";
+        ? `https://api.margallatravels.com.pk/api/drivers/${editingDriver.id}`
+        : "https://api.margallatravels.com.pk/api/drivers";
 
       const method = editingDriver ? "PUT" : "POST";
 
@@ -179,7 +179,7 @@ const [resettingPassword, setResettingPassword] =
       setError("");
 
       const response = await fetch(
-        `http://localhost:5000/api/drivers/${driverToDelete.id}`,
+        `https://api.margallatravels.com.pk/api/drivers/${driverToDelete.id}`,
         {
           method: "DELETE",
           headers: {
@@ -256,7 +256,7 @@ const handleResetPassword = async () => {
     setError("");
 
     const response = await fetch(
-      `http://localhost:5000/api/drivers/${driverToReset.id}/reset-password`,
+      `https://api.margallatravels.com.pk/api/drivers/${driverToReset.id}/reset-password`,
       {
         method: "POST",
         headers: {

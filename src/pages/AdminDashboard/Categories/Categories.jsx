@@ -37,7 +37,7 @@ const [savingMonthlyLimit, setSavingMonthlyLimit] = useState(false);
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/api/categories",
+        "https://api.margallatravels.com.pk/api/categories",
         {
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
@@ -79,7 +79,7 @@ const handleUpdateCategory = async (e) => {
     setError("");
 
     const response = await fetch(
-      `http://localhost:5000/api/categories/${editingCategory.id}`,
+      `https://api.margallatravels.com.pk/api/categories/${editingCategory.id}`,
       {
         method: "PATCH",
         headers: {
@@ -119,7 +119,7 @@ const handleDelete = async () => {
     setDeleteError("");
 
     const response = await fetch(
-      `http://localhost:5000/api/categories/${deletingCategory.id}`,
+      `https://api.margallatravels.com.pk/api/categories/${deletingCategory.id}`,
       {
         method: "DELETE",
         headers: {
@@ -164,7 +164,7 @@ const fetchMonthlyLimit = async (categoryId) => {
     const month = now.getMonth() + 1;
 
     const response = await fetch(
-      `http://localhost:5000/api/categories/${categoryId}/monthly-limit?year=${year}&month=${month}`,
+      `https://api.margallatravels.com.pk/api/categories/${categoryId}/monthly-limit?year=${year}&month=${month}`,
       {
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
@@ -212,7 +212,7 @@ const handleSaveMonthlyLimit = async (e) => {
     const month = now.getMonth() + 1;
 
     const response = await fetch(
-      `http://localhost:5000/api/categories/${monthlyLimitCategory.id}/monthly-limit`,
+      `https://api.margallatravels.com.pk/api/categories/${monthlyLimitCategory.id}/monthly-limit`,
       {
         method: "POST",
         headers: {
@@ -271,7 +271,7 @@ const handleSaveMonthlyLimit = async (e) => {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/api/categories",
+        "https://api.margallatravels.com.pk/api/categories",
         {
           method: "POST",
           headers: {

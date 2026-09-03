@@ -111,7 +111,7 @@ function DriverDashboard() {
       */
 
       const response = await fetch(
-        "http://localhost:5000/api/mileage/my-dashboard",
+        "https://api.margallatravels.com.pk/api/mileage/my-dashboard",
         {
           headers: {
             Authorization: `Bearer ${session.access_token}`,
@@ -128,7 +128,7 @@ function DriverDashboard() {
       */
 
       const historyResponse = await fetch(
-        "http://localhost:5000/api/mileage/my-history",
+        "https://api.margallatravels.com.pk/api/mileage/my-history",
         {
           headers: {
             Authorization: `Bearer ${session.access_token}`,
@@ -317,7 +317,7 @@ if (vehicle.status !== "active") {
       setSubmittingMileage(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/mileage",
+        "https://api.margallatravels.com.pk/api/mileage",
         {
           method: "POST",
 

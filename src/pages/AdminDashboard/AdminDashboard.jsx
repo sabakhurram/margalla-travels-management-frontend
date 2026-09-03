@@ -46,7 +46,7 @@ useEffect(() => {
       setDashboardError("");
 
       const response = await fetch(
-        "http://localhost:5000/api/dashboard/overview",
+        "https://api.margallatravels.com.pk/api/dashboard/overview",
         {
           headers: {
             Authorization: `Bearer ${session.access_token}`,

@@ -60,7 +60,7 @@ const filteredVehicles = vehicles.filter((vehicle) => {
 const fetchCategories = async () => {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/categories",
+      "https://api.margallatravels.com.pk/api/categories",
       {
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
@@ -86,7 +86,7 @@ const fetchCategories = async () => {
 const fetchDrivers = async () => {
   try {
     const response = await fetch(
-      "http://localhost:5000/api/drivers",
+      "https://api.margallatravels.com.pk/api/drivers",
       {
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
@@ -114,7 +114,7 @@ const fetchDrivers = async () => {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/api/vehicles",
+        "https://api.margallatravels.com.pk/api/vehicles",
         {
           headers: {
             Authorization: `Bearer ${session?.access_token}`,
@@ -179,7 +179,7 @@ const handleAddVehicle = async (e) => {
     setError("");
 
     const response = await fetch(
-      "http://localhost:5000/api/vehicles",
+      "https://api.margallatravels.com.pk/api/vehicles",
       {
         method: "POST",
         headers: {
@@ -262,7 +262,7 @@ const handleUpdateVehicle = async (e) => {
     setError("");
 
     const response = await fetch(
-      `http://localhost:5000/api/vehicles/${editingVehicle.id}`,
+      `https://api.margallatravels.com.pk/api/vehicles/${editingVehicle.id}`,
       {
         method: "PATCH",
         headers: {
@@ -343,7 +343,7 @@ const handleDeleteVehicle = async () => {
     setDeleteError("");
 
     const response = await fetch(
-      `http://localhost:5000/api/vehicles/${vehicleToDelete.id}`,
+      `https://api.margallatravels.com.pk/api/vehicles/${vehicleToDelete.id}`,
       {
         method: "DELETE",
         headers: {

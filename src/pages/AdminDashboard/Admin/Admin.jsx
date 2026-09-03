@@ -40,7 +40,7 @@ const [resetPasswordInfo, setResetPasswordInfo] = useState(null);
       setLoading(true);
       setError("");
 
-      const response = await fetch("http://localhost:5000/api/auth/admins", {
+      const response = await fetch("https://api.margallatravels.com.pk/api/auth/admins", {
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
         },
@@ -83,7 +83,7 @@ const [resetPasswordInfo, setResetPasswordInfo] = useState(null);
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/api/auth/create-admin",
+        "https://api.margallatravels.com.pk/api/auth/create-admin",
         {
           method: "POST",
           headers: {
@@ -131,7 +131,7 @@ const handleResetPassword = async () => {
     setError("");
 
     const response = await fetch(
-      `http://localhost:5000/api/admins/${adminToReset.id}/reset-password`,
+      `https://api.margallatravels.com.pk/api/admins/${adminToReset.id}/reset-password`,
       {
         method: "PUT",
         headers: {
@@ -168,7 +168,7 @@ const handleDeleteAdmin = async () => {
     setError("");
 
     const response = await fetch(
-      `http://localhost:5000/api/admins/${adminToDelete.id}`,
+      `https://api.margallatravels.com.pk/api/admins/${adminToDelete.id}`,
       {
         method: "DELETE",
 

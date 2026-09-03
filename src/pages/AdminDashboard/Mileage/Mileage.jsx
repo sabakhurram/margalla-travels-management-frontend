@@ -44,7 +44,7 @@ function Mileage({
       setError("");
 
       let url =
-        "http://localhost:5000/api/mileage/monitoring";
+        "https://api.margallatravels.com.pk/api/mileage/monitoring";
 
       if (filter === "today") {
         url += "?filter=today";
