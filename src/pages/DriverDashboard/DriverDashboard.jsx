@@ -976,12 +976,7 @@ if (vehicle.status !== "active") {
                     e.target.value
                   )
                 }
-                readOnly={
-                  dashboardData?.startingOdometer !==
-                    null &&
-                  dashboardData?.startingOdometer !==
-                    undefined
-                }
+              
               />
 
             </div>
