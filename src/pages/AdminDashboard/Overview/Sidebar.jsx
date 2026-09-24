@@ -10,6 +10,7 @@ import {
     ShieldCheck,
   Menu,
   X,
+  MapPinned,
   UserRound,
 } from "lucide-react";
 
@@ -53,7 +54,11 @@ const { profile } = useAuth();
       icon: Gauge,
       tab: "mileage",
     },
- 
+ {
+  label: "Outstation Trips",
+  icon: MapPinned,
+  tab: "outstation",
+},
     {
       label: "Categories",
       icon: Tags,

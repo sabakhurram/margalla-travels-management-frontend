@@ -13,6 +13,7 @@ import Mileage from "./Mileage/Mileage";
 import Reports from "./Reports/Reports";
 import AuditLogs from "./AuditLogs/AuditLogs";
 import Admins from "./Admin/Admin";
+import Outstation from "./Outstation/Outstation";
 import {
   CarFront,
   Users,
@@ -45,8 +46,10 @@ useEffect(() => {
       setDashboardLoading(true);
       setDashboardError("");
 
+      // const response = await fetch(
+      //   "https://api.margallatravels.com.pk/api/dashboard/overview",
       const response = await fetch(
-        "https://api.margallatravels.com.pk/api/dashboard/overview",
+  "http://localhost:5000/api/dashboard/overview",
         {
           headers: {
             Authorization: `Bearer ${session.access_token}`,
@@ -325,6 +328,9 @@ const filteredAlerts = (
 )}
 {activeTab === "audit-logs" && (
   <AuditLogs searchQuery={searchQuery} />
+)}
+{activeTab === "outstation" && (
+  <Outstation searchQuery={searchQuery} />
 )}
 </div>
 

@@ -25,7 +25,9 @@ function Mileage({
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
+const API_BASE =
+  import.meta.env.VITE_API_BASE_URL ||
+  "http://localhost:5000/api";
   /*
   ====================================================
   FETCH MILEAGE MONITORING
@@ -43,9 +45,10 @@ function Mileage({
       setLoading(true);
       setError("");
 
-      let url =
-        "https://api.margallatravels.com.pk/api/mileage/monitoring";
-
+      // let url =
+      //   "https://api.margallatravels.com.pk/api/mileage/monitoring";
+let url =
+  `${API_BASE}/mileage/monitoring`;
       if (filter === "today") {
         url += "?filter=today";
       }

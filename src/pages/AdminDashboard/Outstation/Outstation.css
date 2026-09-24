@@ -1,0 +1,452 @@
+.outstation-page {
+  width: 100%;
+}
+
+.outstation-header {
+  width: 100%;
+  margin-bottom: 28px;
+}
+
+.outstation-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 4px 2px;
+}
+.outstation-heading > div:last-child {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.outstation-heading-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(7, 151, 168, 0.1);
+  color: #0797a8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.outstation-heading h1 {
+  margin: 0;
+  font-size: 25px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.2px;
+}
+
+.outstation-heading p {
+  margin: 7px 0 0;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.outstation-error {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+  font-size: 14px;
+}
+
+.outstation-table-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.outstation-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.outstation-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.outstation-table thead {
+  background: #f8fafc;
+}
+
+.outstation-table th {
+  padding: 16px 22px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+.outstation-table td {
+  padding: 18px 22px;
+  font-size: 14px;
+  color: #334155;
+  border-bottom: 1px solid #eef2f4;
+  vertical-align: top;
+}
+
+.outstation-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.outstation-table tbody tr {
+  transition: background 0.2s ease;
+}
+
+.outstation-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.outstation-driver,
+.outstation-vehicle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.outstation-driver svg,
+.outstation-vehicle svg {
+  color: #0797a8;
+  flex-shrink: 0;
+}
+
+.outstation-destination {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 200px;
+}
+
+.outstation-destination strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+.outstation-destination span {
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.outstation-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.outstation-status.started {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.outstation-status.location_shared {
+  background: #f0fdfa;
+  color: #0f766e;
+}
+
+.outstation-status.completed {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.outstation-loading,
+.outstation-empty {
+  padding: 70px 20px;
+  text-align: center;
+  color: #64748b;
+}
+
+.outstation-empty svg {
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+
+.outstation-empty h3 {
+  margin: 0 0 6px;
+  color: #334155;
+  font-size: 17px;
+}
+
+.outstation-empty p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .outstation-heading h1 {
+    font-size: 21px;
+  }
+
+  .outstation-heading-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .outstation-table th,
+  .outstation-table td {
+    padding: 13px 14px;
+  }
+}
+.outstation-destination {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  min-width: 230px;
+  line-height: 1.45;
+  text-align: left;
+}
+
+.outstation-destination strong {
+  display: block;
+  color: #1e293b;
+  font-weight: 600;
+  text-align: left;
+}
+
+.outstation-destination span {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: left;
+}
+
+/* Location Button */
+
+.outstation-location-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  padding: 8px 12px;
+  border: 1px solid #dbe5e8;
+  border-radius: 8px;
+
+  background: #ffffff;
+  color: #0797a8;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+  white-space: nowrap;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.outstation-location-btn:hover {
+  background: #f0fdfa;
+  border-color: #0797a8;
+}
+
+
+/* Modal Overlay */
+
+.outstation-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(15, 23, 42, 0.55);
+}
+
+
+/* Modal */
+
+.outstation-modal {
+  width: min(900px, 100%);
+  max-height: 90vh;
+
+  background: #ffffff;
+  border-radius: 16px;
+
+  overflow: hidden;
+
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25);
+
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* Modal Header */
+
+.outstation-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 20px 24px;
+
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.outstation-modal-header h2 {
+  margin: 0;
+
+  color: #1e293b;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.outstation-modal-header p {
+  margin: 5px 0 0;
+
+  color: #64748b;
+
+  font-size: 13px;
+}
+
+
+/* Close Button */
+
+.outstation-modal-close {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #f1f5f9;
+  color: #475569;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.outstation-modal-close:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+
+/* Map */
+
+.outstation-modal-map {
+  width: 100%;
+}
+
+.outstation-map {
+  width: 100%;
+}
+
+.outstation-map .leaflet-container {
+  width: 100%;
+  height: 450px;
+}
+
+
+/* Location Information */
+
+.outstation-location-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+
+  padding: 20px 24px;
+
+  border-top: 1px solid #e5e7eb;
+}
+
+.outstation-location-info > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.outstation-location-info strong {
+  color: #64748b;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.outstation-location-info span {
+  color: #334155;
+
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+
+/* Responsive */
+
+@media (max-width: 768px) {
+  .outstation-modal-overlay {
+    padding: 12px;
+  }
+
+  .outstation-modal {
+    max-height: 94vh;
+    border-radius: 12px;
+  }
+
+  .outstation-modal-header {
+    padding: 16px;
+  }
+
+  .outstation-location-info {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .outstation-map .leaflet-container {
+    height: 360px;
+  }
+}
+
+.outstation-map-status {
+  padding: 10px 14px;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  color: #64748b;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+}
