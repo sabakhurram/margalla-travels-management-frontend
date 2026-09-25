@@ -73,10 +73,9 @@ const generateReport = async () => {
     setLoading(true);
     setError("");
 
-    // const response = await fetch(
-    //   `https://api.margallatravels.com.pk/api/mileage/monthly-report?year=${year}&month=${month}`,
     const response = await fetch(
-  `http://localhost:5000/api/mileage/monthly-report?year=${year}&month=${month}`,
+      `https://api.margallatravels.com.pk/api/mileage/monthly-report?year=${year}&month=${month}`,
+  
       {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
@@ -123,10 +122,9 @@ const handleDownloadPDF = async () => {
     setGenerating(true);
     setError("");
 
-    // const response = await fetch(
-    //   `https://api.margallatravels.com.pk/api/mileage/monthly-report/pdf?year=${year}&month=${month}`,
     const response = await fetch(
-  `http://localhost:5000/api/mileage/monthly-report/pdf?year=${year}&month=${month}`,
+      `https://api.margallatravels.com.pk/api/mileage/monthly-report/pdf?year=${year}&month=${month}`,
+   
       {
         headers: {
           Authorization: `Bearer ${session?.access_token}`,

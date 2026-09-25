@@ -49,7 +49,7 @@ useEffect(() => {
       // const response = await fetch(
       //   "https://api.margallatravels.com.pk/api/dashboard/overview",
       const response = await fetch(
-  "http://localhost:5000/api/dashboard/overview",
+  `${import.meta.env.VITE_API_BASE_URL}/api/dashboard/overview`,
         {
           headers: {
             Authorization: `Bearer ${session.access_token}`,

@@ -25,7 +25,7 @@ const [selectedTrip, setSelectedTrip] = useState(null);
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/outstation/admin",
+        `${import.meta.env.VITE_API_BASE_URL}/api/outstation/admin`,
           {
             headers: {
               Authorization: `Bearer ${session?.access_token}`,
